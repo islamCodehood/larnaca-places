@@ -4,28 +4,17 @@ import sortBy from "sort-by";
 
 class SearchForm extends Component {
   state = {
-    query: ""
+    query: ''
   };
   handleChange = query => {
     this.setState({
+      //trim white spaces
       query: query.trim()
     });
-    this.props.testMe(query)
+    this.props.testMe(query);
   };
-  
-  render() {
-    /* let matchedPlaces;
-    if (this.state.query) {
-      const searchText = new RegExp(escapeRegExp(this.state.query), "i");
-      matchedPlaces = this.props.markers.filter(marker =>
-        searchText.test(marker.title)
-      );
-    } else {
-      matchedPlaces = this.props.markers;
-    }
-    matchedPlaces.sort(sortBy("title"));
 
-    console.log(matchedPlaces); */
+  render() {
     return (
       <div>
         <div id="searchForm">
@@ -47,8 +36,8 @@ class SearchForm extends Component {
         </div>
         <div id="list">
           <ul id="unordered-list">
-            {this.props.listedPlaces.map(marker => (
-              <li key={marker.id}>{marker.title}</li>
+            {this.props.placesLocations.map((location, index) => (
+              <li key={index}>{location.title}</li>
             ))}
           </ul>
         </div>
