@@ -36,8 +36,8 @@ class SearchForm extends Component {
         </div>
         <div id="list">
           <ul id="unordered-list">
-            {this.props.placesLocations.map((location, index) => (
-              <li key={index}>{location.title}</li>
+            {this.props.listedPlaces.map(marker => (
+              <li key={marker.id}>{marker.title}</li>
             ))}
           </ul>
         </div>
