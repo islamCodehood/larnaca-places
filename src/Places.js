@@ -1,18 +1,19 @@
-import React, { Component} from 'react'
-import Header from './Header'
-import SearchForm from './SearchForm'
+import React, { Component } from "react";
+import Header from "./Header";
+import SearchForm from "./SearchForm";
 
 class Places extends Component {
-
-    render() {
-        return (
-            <div>
-                <Header />
-                <SearchForm markers={this.props.markers} testMe={this.props.testMe} />
-            </div>
-        )
-    }
+  render() {
+    return (
+      <div>
+        <Header />
+        <SearchForm
+          listedPlaces={this.props.listedPlaces}
+          testMe={this.props.testMe}
+        />
+      </div>
+    );
+  }
 }
 
-
-export default Places
+export default Places;
