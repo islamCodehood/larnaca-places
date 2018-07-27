@@ -9,7 +9,7 @@ import sortBy from "sort-by";
 class App extends Component {
   state = {
     markers: [],
-    placesLocations : [
+    placesLocations: [
       { title: "Salt Lake", position: { lat: 34.885737, lng: 33.614779 } },
       {
         title: "Amorgos Boutique Hotel",
@@ -71,69 +71,73 @@ class App extends Component {
       }
     ],
     listedPlaces: []
-  }
-  
+  };
+
   onMapLoad = map => {
     var bounds = new window.google.maps.LatLngBounds();
+
     this.state.placesLocations.forEach((place, index) => {
       var position = place.position;
       var title = place.title;
       var id = place.index;
+      var infoWindow = new window.google.maps.InfoWindow({
+        content: title
+      });
       var marker = new window.google.maps.Marker({
         position,
         title,
         map,
-        animation: window.google.maps.Animation.DROP,
-        id
+        id,
+        animation: window.google.maps.Animation.DROP
+      });
+      marker.addListener('click', function() {
+        showInfoWindow(this, infoWindow);
       });
       this.setState(state => ({
         listedPlaces: state.listedPlaces.concat(marker)
-      }))
+      }));
       this.setState(state => ({
         markers: state.markers.concat(marker)
-      }))
+      }));
       bounds.extend(marker.position);
-    })
+    });
     map.fitBounds(bounds);
+    var showInfoWindow = (marker, infoWindow) => {
+      infoWindow.addListener('closeclick', function() {
+        infoWindow.marker = null;
+      });
+      infoWindow.open(map, marker);
+    }
   };
-  testMe = (query) => {
-    console.log(query)
+
+  
+
+  testMe = query => {
+    console.log(query);
     if (query) {
       const searchText = new RegExp(escapeRegExp(query), "i");
       this.setState(state => ({
         listedPlaces: state.markers.filter(marker =>
           searchText.test(marker.title)
         )
-      }))
-      //this.onMapLoad()
-      /* this.state.placesLocations.forEach((place, index) => {
-        var position = place.position;
-        var title = place.title;
-        var marker = new window.google.maps.Marker({
-          position,
-          title,
-          map,
-          animation: window.google.maps.Animation.DROP,
-          id: index
-        });
-        this.setState(state => ({
-          listedPlaces: state.listedPlaces.concat(marker)
-        }))
-        this.setState(state => ({
-          markers: state.markers.concat(marker)
-        }))
-        bounds.extend(marker.position);
-      }) */
+      }));
+      this.setState(state => ({
+        placesLocations: state.placesLocations.filter(location =>
+          searchText.test(location.title)
+        )
+      }));
+      console.log(this.state.placesLocations)
     } else {
       this.setState(state => ({
         listedPlaces: state.markers
-      }))
-      
+      }));
     }
-  }
+  };
 
   render() {
+
     return (
+      
       <div className="App">
         <Burger />
         <Places listedPlaces={this.state.listedPlaces} testMe={this.testMe} />
