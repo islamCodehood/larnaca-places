@@ -3,6 +3,8 @@ import "./App.css";
 import Burger from "./Burger";
 import Places from "./Places";
 import Map from "./Map";
+import escapeRegExp from "escape-string-regexp";
+import sortBy from "sort-by";
 
 class App extends Component {
   state = {
@@ -67,8 +69,10 @@ class App extends Component {
         title: "Larnaca International Airport",
         position: { lat: 34.87234, lng: 33.620352 }
       }
-    ]
+    ],
+    listedPlaces: []
   }
+  
   onMapLoad = map => {
     var bounds = new window.google.maps.LatLngBounds();
     this.state.placesLocations.forEach((place, index) => {
@@ -82,19 +86,59 @@ class App extends Component {
         id: index
       });
       this.setState(state => ({
+        listedPlaces: state.listedPlaces.concat(marker)
+      }))
+      this.setState(state => ({
         markers: state.markers.concat(marker)
       }))
+      console.log(marker.map)
       bounds.extend(marker.position);
     })
     map.fitBounds(bounds);
     // console.log(this.state.markers)
   };
-
+  testMe = (query) => {
+    console.log(query)
+    if (query) {
+      const searchText = new RegExp(escapeRegExp(query), "i");
+      this.setState(state => ({
+        listedPlaces: state.markers.filter(marker =>
+          searchText.test(marker.title)
+        )
+      }))
+      //this.onMapLoad()
+      /* this.state.placesLocations.forEach((place, index) => {
+        var position = place.position;
+        var title = place.title;
+        var marker = new window.google.maps.Marker({
+          position,
+          title,
+          map,
+          animation: window.google.maps.Animation.DROP,
+          id: index
+        });
+        this.setState(state => ({
+          listedPlaces: state.listedPlaces.concat(marker)
+        }))
+        this.setState(state => ({
+          markers: state.markers.concat(marker)
+        }))
+        bounds.extend(marker.position);
+      }) */
+    } else {
+      this.setState(state => ({
+        listedPlaces: state.markers
+      }))
+      
+    }
+/*     matchedPlaces.sort(sortBy("title"));
+ */
+  }
   render() {
     return (
       <div className="App">
         <Burger />
-        <Places markers={this.state.markers} />
+        <Places listedPlaces={this.state.listedPlaces} testMe={this.testMe} />
         <Map
           parameters={{
             center: { lat: 34.900253, lng: 33.623172 }
