@@ -10,6 +10,7 @@ class Places extends Component {
         <SearchForm
           listedPlaces={this.props.listedPlaces}
           testMe={this.props.testMe}
+          placesLocations={this.props.placesLocations}
         />
       </div>
     );
