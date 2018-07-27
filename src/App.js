@@ -92,11 +92,9 @@ class App extends Component {
       this.setState(state => ({
         markers: state.markers.concat(marker)
       }))
-      console.log(marker.map)
       bounds.extend(marker.position);
     })
     map.fitBounds(bounds);
-    // console.log(this.state.markers)
   };
   testMe = (query) => {
     console.log(query)
@@ -132,9 +130,8 @@ class App extends Component {
       }))
       
     }
-/*     matchedPlaces.sort(sortBy("title"));
- */
   }
+
   render() {
     return (
       <div className="App">
@@ -142,7 +139,8 @@ class App extends Component {
         <Places listedPlaces={this.state.listedPlaces} testMe={this.testMe} />
         <Map
           parameters={{
-            center: { lat: 34.900253, lng: 33.623172 }
+            center: { lat: 34.900253, lng: 33.623172 },
+            zoom: 13
           }}
           onMapLoad={this.onMapLoad}
         />
