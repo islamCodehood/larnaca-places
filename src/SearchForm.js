@@ -6,14 +6,15 @@ class SearchForm extends Component {
   state = {
     query: ""
   };
-  handleChange = (query, arr) => {
+  handleChange = query => {
     this.setState({
       query: query.trim()
     });
+    this.props.testMe(query)
   };
-
+  
   render() {
-    let matchedPlaces;
+    /* let matchedPlaces;
     if (this.state.query) {
       const searchText = new RegExp(escapeRegExp(this.state.query), "i");
       matchedPlaces = this.props.markers.filter(marker =>
@@ -24,7 +25,7 @@ class SearchForm extends Component {
     }
     matchedPlaces.sort(sortBy("title"));
 
-    console.log(matchedPlaces);
+    console.log(matchedPlaces); */
     return (
       <div>
         <div id="searchForm">
@@ -36,12 +37,17 @@ class SearchForm extends Component {
               value={this.state.query}
               onChange={evt => this.handleChange(evt.target.value)}
             />
-            <input type="button" id="filter-button" value="Filter" />
+            <input
+              type="button"
+              id="filter-button"
+              value="Filter"
+              onClick={this.handleClick}
+            />
           </form>
         </div>
         <div id="list">
           <ul id="unordered-list">
-            {matchedPlaces.map(marker => (
+            {this.props.listedPlaces.map(marker => (
               <li key={marker.id}>{marker.title}</li>
             ))}
           </ul>
