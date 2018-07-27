@@ -78,12 +78,13 @@ class App extends Component {
     this.state.placesLocations.forEach((place, index) => {
       var position = place.position;
       var title = place.title;
+      var id = place.index;
       var marker = new window.google.maps.Marker({
         position,
         title,
         map,
         animation: window.google.maps.Animation.DROP,
-        id: index
+        id
       });
       this.setState(state => ({
         listedPlaces: state.listedPlaces.concat(marker)
