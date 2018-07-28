@@ -70,69 +70,153 @@ class App extends Component {
         position: { lat: 34.87234, lng: 33.620352 }
       }
     ],
-    listedPlaces: []
+    listedPlaces: [],
+    map: null,
+    query: '',
+    selectedPlace: '',
+    infoWindows: []
   };
+  componentDidMount() {
+    //check if the script has not been looded yet(google is undefined)
+    if (!window.google) {
+        var scriptElement = document.createElement('script');
+        scriptElement.type = 'text/javascript';
+        scriptElement.src = `https://maps.google.com/maps/api/js?key=AIzaSyCFLgAmdZmi8GXGUAasIOWJ-cbYhuoXkyE`;
+        //x is the first script element in the file
+        var x = document.getElementsByTagName('script')[0];
+        //insert map script before it
+        x.parentNode.insertBefore(scriptElement, x);
+        scriptElement.addEventListener('load', e => {
+          //initiate the map then
+          this.onScriptLoad()
+        })
+    } else {
+        //if the script has been looded, then initiate the map
+        this.onScriptLoad()
+      }
+}
+componentDidUpdate() {
 
-  onMapLoad = map => {
+  console.log(this.state.listedPlaces)
+  console.log(this.state.query)
+
+  if (this.state.query) {
+    this.state.markers.forEach(marker => {
+      marker.setMap(null)
+    })
+    this.state.listedPlaces.forEach(marker => {
+      marker.setMap(this.state.map)
+    })
+  } else {
+    this.state.markers.forEach(marker => {
+      marker.setMap(this.state.map)
+    })
+  }
+  if (this.state.selectedPlace) {
+    this.state.listedPlaces.forEach(place => {
+      if (place.title === this.state.selectedPlace) {
+        place.setAnimation(window.google.maps.Animation.BOUNCE)
+        setTimeout( () => {
+          place.setAnimation(null);
+      }, 400)
+      var selectedInfoWindow = this.state.infoWindows.find(infoWindow => infoWindow.content === place.title)
+      console.log(selectedInfoWindow)
+      selectedInfoWindow.addListener('closeclick', function() {
+        selectedInfoWindow.place = null;
+      });
+      selectedInfoWindow.open(this.state.map, place);
+      }
+      
+    })
+    this.setState({
+      selectedPlace: ''
+    })
+  }
+}
+  onScriptLoad = () => {
+    var map = new window.google.maps.Map(
+        document.getElementById("map"),
+        this.parameters);
+        this.setState({
+          map,
+        })
+        this.makeMarkers(map)
+      }
+
+  makeMarkers = (map) => {
     var bounds = new window.google.maps.LatLngBounds();
-
-    this.state.placesLocations.forEach((place, index) => {
-      var position = place.position;
-      var title = place.title;
-      var id = place.index;
-      var infoWindow = new window.google.maps.InfoWindow({
-        content: title
-      });
-      var marker = new window.google.maps.Marker({
-        position,
-        title,
-        map,
-        id,
-        animation: window.google.maps.Animation.DROP
-      });
-      marker.addListener('click', function() {
-        showInfoWindow(this, infoWindow);
-      });
-      this.setState(state => ({
-        listedPlaces: state.listedPlaces.concat(marker)
-      }));
-      this.setState(state => ({
-        markers: state.markers.concat(marker)
-      }));
-      bounds.extend(marker.position);
-    });
-    map.fitBounds(bounds);
-    var showInfoWindow = (marker, infoWindow) => {
-      infoWindow.addListener('closeclick', function() {
-        infoWindow.marker = null;
-      });
-      infoWindow.open(map, marker);
-    }
-  };
-
-  
-
+        console.log('hi')
+        this.state.placesLocations.forEach((place, index) => {
+          var position = place.position;
+          var title = place.title;
+          var id = index;
+          var infoWindow = new window.google.maps.InfoWindow({
+            content: title
+          });
+          var marker = new window.google.maps.Marker({
+            position,
+            title,
+            map,
+            id,
+            animation: window.google.maps.Animation.DROP
+          });
+          marker.addListener('click', function() {
+            showInfoWindow(this, infoWindow);
+          });
+          this.setState(state => ({
+            listedPlaces: state.listedPlaces.concat(marker)
+          }));
+          this.state.listedPlaces.sort(sortBy('title'))
+          this.setState(state => ({
+            markers: state.markers.concat(marker)
+          }));
+          this.state.markers.sort(sortBy('title'))
+          this.setState(state => ({
+            infoWindows: state.infoWindows.concat(infoWindow)
+          }))
+          bounds.extend(marker.position);
+        });
+        map.fitBounds(bounds);
+        var showInfoWindow = (marker, infoWindow) => {
+          infoWindow.addListener('closeclick', function() {
+            infoWindow.marker = null;
+          });
+          infoWindow.open(map, marker);
+        }
+  }
+        
   testMe = query => {
     console.log(query);
     if (query) {
       const searchText = new RegExp(escapeRegExp(query), "i");
+      
       this.setState(state => ({
         listedPlaces: state.markers.filter(marker =>
           searchText.test(marker.title)
         )
       }));
-      this.setState(state => ({
-        placesLocations: state.placesLocations.filter(location =>
-          searchText.test(location.title)
-        )
-      }));
-      console.log(this.state.placesLocations)
+      this.setState({
+        query: query
+      })
     } else {
       this.setState(state => ({
         listedPlaces: state.markers
       }));
+      this.state.listedPlaces.sort(sortBy('title'))
+      this.setState({
+        query: query
+      })
     }
   };
+
+  selectPlace = (selectedPlace) => {
+    
+    this.setState({
+      selectedPlace
+    })
+    
+  } 
+
 
   render() {
 
@@ -140,13 +224,16 @@ class App extends Component {
       
       <div className="App">
         <Burger />
-        <Places listedPlaces={this.state.listedPlaces} testMe={this.testMe} />
+        <Places 
+          listedPlaces={this.state.listedPlaces} 
+          testMe={this.testMe}
+          selectPlace={this.selectPlace}
+        />
         <Map
           parameters={{
             center: { lat: 34.900253, lng: 33.623172 },
             zoom: 13
           }}
-          onMapLoad={this.onMapLoad}
         />
       </div>
     );
