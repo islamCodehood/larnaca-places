@@ -97,8 +97,8 @@ class App extends Component {
 }
 componentDidUpdate() {
 
-  console.log(this.state.listedPlaces)
-  console.log(this.state.query)
+  //console.log(this.state.listedPlaces)
+  //console.log(this.state.query)
 
   if (this.state.query) {
     this.state.markers.forEach(marker => {
@@ -112,15 +112,15 @@ componentDidUpdate() {
       marker.setMap(this.state.map)
     })
   }
-  if (this.state.selectedPlace) {
+   if (this.state.selectedPlace) {
     this.state.listedPlaces.forEach(place => {
       if (place.title === this.state.selectedPlace) {
         place.setAnimation(window.google.maps.Animation.BOUNCE)
         setTimeout( () => {
           place.setAnimation(null);
       }, 400)
-      var selectedInfoWindow = this.state.infoWindows.find(infoWindow => infoWindow.content === place.title)
-      console.log(selectedInfoWindow)
+      var selectedInfoWindow = this.state.infoWindows[0]
+      selectedInfoWindow.setContent(place.title)
       selectedInfoWindow.addListener('closeclick', function() {
         selectedInfoWindow.place = null;
       });
@@ -150,9 +150,6 @@ componentDidUpdate() {
           var position = place.position;
           var title = place.title;
           var id = index;
-          var infoWindow = new window.google.maps.InfoWindow({
-            content: title
-          });
           var marker = new window.google.maps.Marker({
             position,
             title,
@@ -171,9 +168,6 @@ componentDidUpdate() {
             markers: state.markers.concat(marker)
           }));
           this.state.markers.sort(sortBy('title'))
-          this.setState(state => ({
-            infoWindows: state.infoWindows.concat(infoWindow)
-          }))
           bounds.extend(marker.position);
         });
         map.fitBounds(bounds);
@@ -181,8 +175,19 @@ componentDidUpdate() {
           infoWindow.addListener('closeclick', function() {
             infoWindow.marker = null;
           });
+          infoWindow.setContent(marker.title)
           infoWindow.open(map, marker);
         }
+        /*declare the infoWindow out of the array looping (One infoWindow for all)
+         *with a content set when it is open. This to avoid having multiple 
+         *infoWindows at the same time.*/
+        var infoWindow = new window.google.maps.InfoWindow({
+          content: ''
+        });
+        //create a state of infoWindow to be able to use it outside of  makeMarker function.
+        this.setState(state => ({
+          infoWindows: state.infoWindows.concat(infoWindow)
+        }))
   }
         
   testMe = query => {
@@ -210,7 +215,7 @@ componentDidUpdate() {
   };
 
   selectPlace = (selectedPlace) => {
-    
+
     this.setState({
       selectedPlace
     })
