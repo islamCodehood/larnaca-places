@@ -8,7 +8,7 @@ class SearchForm extends Component {
   handleChange = query => {
     this.setState({
       //trim white spaces
-      query: query.trim()
+      query: query
     });
     this.props.testMe(query);
   };
@@ -17,27 +17,19 @@ class SearchForm extends Component {
     console.log(e.target.textContent, 'clicked')
     this.props.selectPlace(e.target.textContent)
   }
+
   
   render() {
- /*    document.getElementsByTagName('li').addEventListener('click', () => {
-      console.log('weee')
-    }) */
     return (
       <div>
         <div id="searchForm">
-          <form>
+          <form onSubmit={this.filter} value={this.state.query}>
             <input
               type="text"
               id="seacrh-text-input"
               placeholder="Enter a place"
               value={this.state.query}
               onChange={evt => this.handleChange(evt.target.value)}
-            />
-            <input
-              type="button"
-              id="filter-button"
-              value="Filter"
-              onClick={this.handleClick}
             />
           </form>
         </div>
