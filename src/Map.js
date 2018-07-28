@@ -3,7 +3,7 @@ import React, { Component} from 'react'
 class Map extends Component {
     /*citation for this code snippet for lazy loading:
     *http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries*/
-    onScriptLoad = () => {
+    /* onScriptLoad = () => {
         var map = new window.google.maps.Map(
             document.getElementById("map"),
             this.props.parameters);
@@ -28,7 +28,7 @@ class Map extends Component {
             //if the script has been looded, then initiate the map
             this.onScriptLoad()
           }
-    }
+    } */
     render() {
         
         return (
