@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import escapeRegExp from "escape-string-regexp";
-import sortBy from "sort-by";
+
 
 class SearchForm extends Component {
   state = {
@@ -13,8 +12,16 @@ class SearchForm extends Component {
     });
     this.props.testMe(query);
   };
+  handleClick = (e) => {
 
+    console.log(e.target.textContent, 'clicked')
+    this.props.selectPlace(e.target.textContent)
+  }
+  
   render() {
+ /*    document.getElementsByTagName('li').addEventListener('click', () => {
+      console.log('weee')
+    }) */
     return (
       <div>
         <div id="searchForm">
@@ -37,7 +44,7 @@ class SearchForm extends Component {
         <div id="list">
           <ul id="unordered-list">
             {this.props.listedPlaces.map(marker => (
-              <li key={marker.id}>{marker.title}</li>
+              <li key={marker.id} onClick={this.handleClick}>{marker.title}</li>
             ))}
           </ul>
         </div>
