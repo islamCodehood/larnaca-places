@@ -81,7 +81,7 @@ class App extends Component {
     if (!window.google) {
         var scriptElement = document.createElement('script');
         scriptElement.type = 'text/javascript';
-        scriptElement.src = `https://maps.google.com/maps/api/js?key=AIzaSyCFLgAmdZmi8GXGUAasIOWJ-cbYhuoXkyE`;
+        scriptElement.src = `https://maps.google.com/maps/api/js?libraries=places&key=AIzaSyCFLgAmdZmi8GXGUAasIOWJ-cbYhuoXkyE`;
         //x is the first script element in the file
         var x = document.getElementsByTagName('script')[0];
         //insert map script before it
@@ -96,10 +96,8 @@ class App extends Component {
       }
 }
 componentDidUpdate() {
-
   //console.log(this.state.listedPlaces)
   //console.log(this.state.query)
-
   if (this.state.query) {
     this.state.markers.forEach(marker => {
       marker.setMap(null)
@@ -120,7 +118,7 @@ componentDidUpdate() {
           place.setAnimation(null);
       }, 400)
       var selectedInfoWindow = this.state.infoWindows[0]
-      selectedInfoWindow.setContent(place.title)
+      selectedInfoWindow.setContent(place.title + '<br>location:'+ place.position + '<br><a href="#">know more</a>')
       selectedInfoWindow.addListener('closeclick', function() {
         selectedInfoWindow.place = null;
       });
@@ -175,7 +173,7 @@ componentDidUpdate() {
           infoWindow.addListener('closeclick', function() {
             infoWindow.marker = null;
           });
-          infoWindow.setContent(marker.title)
+          infoWindow.setContent(marker.title + '<br>location:'+ marker.position + '<br><a href="#">know more</a>')
           infoWindow.open(map, marker);
         }
         /*declare the infoWindow out of the array looping (One infoWindow for all)
@@ -215,12 +213,11 @@ componentDidUpdate() {
   };
 
   selectPlace = (selectedPlace) => {
-
     this.setState({
       selectedPlace
     })
-    
   } 
+
 
 
   render() {
@@ -233,6 +230,7 @@ componentDidUpdate() {
           listedPlaces={this.state.listedPlaces} 
           testMe={this.testMe}
           selectPlace={this.selectPlace}
+          filterPlace={this.filterPlace}
         />
         <Map
           parameters={{
