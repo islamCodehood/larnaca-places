@@ -10,17 +10,12 @@ class App extends Component {
   state = {
     markers: [],
     placesLocations: [
-      { title: "Salt Lake", position: { lat: 34.885737, lng: 33.614779 } },
       {
         title: "Amorgos Boutique Hotel",
         position: { lat: 34.913244, lng: 33.636832 }
       },
       {
-        title: "Flamingo Beach Hotel",
-        position: { lat: 34.893684, lng: 33.6383 }
-      },
-      {
-        title: "Aldente Cucina Italiana Restaurant",
+        title: "Aldente Cucina Italiana",
         position: { lat: 34.913387, lng: 33.637663 }
       },
       {
@@ -35,16 +30,12 @@ class App extends Component {
         title: "Les Palmiers Beach Hotel",
         position: { lat: 34.914048, lng: 33.637864 }
       },
-      {
-        title: "The Medieval Castle of Larnaka",
-        position: { lat: 34.910271, lng: 33.637694 }
-      },
+
       { title: "Larnaca Marina", position: { lat: 34.917673, lng: 33.638907 } },
       {
         title: "Dionyssos Restaurant",
         position: { lat: 34.910903, lng: 33.63767 }
       },
-      { title: "Flamingo Park", position: { lat: 34.900782, lng: 33.626208 } },
       {
         title: "Pierides Museum",
         position: { lat: 34.916148, lng: 33.636261 }
@@ -58,23 +49,18 @@ class App extends Component {
         position: { lat: 34.912448, lng: 33.635955 }
       },
       {
-        title: "METRO Supermarket Larnaca",
-        position: { lat: 34.921297, lng: 33.624647 }
-      },
-      {
         title: "To Kafe Tis Chrysanthi's",
         position: { lat: 34.912564, lng: 33.635739 }
-      },
-      {
-        title: "Larnaca International Airport",
-        position: { lat: 34.87234, lng: 33.620352 }
       }
     ],
     listedPlaces: [],
     map: null,
     query: '',
     selectedPlace: '',
-    infoWindows: []
+    infoWindows: [],
+    placesId : [],
+    clientId : 'ZBPGPJ4YEZFLSXOFYWBMIWDYVA3I211NBJXN1T5ZCV3PEI0C',
+    clientSecret : '5GWJZPVSPM5XYL1CMQQK1J1YW2QQGQKADZ5VTYQISTWYC4TX' 
   };
   componentDidMount() {
     //check if the script has not been looded yet(google is undefined)
@@ -94,6 +80,13 @@ class App extends Component {
         //if the script has been looded, then initiate the map
         this.onScriptLoad()
       }
+    
+    //get places' ids
+/*     this.state.placesLocations.forEach(place => {
+      fetch(`https://api.foursquare.com/v2/venues/search?name=${(place.title).replace(/ /g, '+')}&city=larnaca&ll=${place.position.lat},${place.position.lng}&intent=match&client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180729`)
+      .then(data => data.json()).then(data => place.id = data.response.venues[0].id)
+    }) */
+
 }
 componentDidUpdate() {
   //console.log(this.state.listedPlaces)
@@ -110,7 +103,7 @@ componentDidUpdate() {
       marker.setMap(this.state.map)
     })
   }
-   if (this.state.selectedPlace) {
+  if (this.state.selectedPlace) {
     this.state.listedPlaces.forEach(place => {
       if (place.title === this.state.selectedPlace) {
         place.setAnimation(window.google.maps.Animation.BOUNCE)
@@ -118,7 +111,7 @@ componentDidUpdate() {
           place.setAnimation(null);
       }, 400)
       var selectedInfoWindow = this.state.infoWindows[0]
-      selectedInfoWindow.setContent(place.title + '<br>location:'+ place.position + '<br><a href="#">know more</a>')
+      selectedInfoWindow.setContent(place.title + '<br>location:'+ place.position + '<br><button id="infoWindowButton">know more</button>')
       selectedInfoWindow.addListener('closeclick', function() {
         selectedInfoWindow.place = null;
       });
@@ -130,6 +123,7 @@ componentDidUpdate() {
       selectedPlace: ''
     })
   }
+
 }
   onScriptLoad = () => {
     var map = new window.google.maps.Map(
@@ -173,8 +167,12 @@ componentDidUpdate() {
           infoWindow.addListener('closeclick', function() {
             infoWindow.marker = null;
           });
-          infoWindow.setContent(marker.title + '<br>location:'+ marker.position + '<br><a href="#">know more</a>')
+          infoWindow.setContent(marker.title + '<br>location:'+ marker.position + `<br><button id="infoWindowButton" type="button" title=${marker.title} onClick=${() => this.handleClick}>know more</button>`)
           infoWindow.open(map, marker);
+          console.log(infoWindow.content)
+          infoWindow.addListener('click', function() {
+            console.log('wow')
+          })
         }
         /*declare the infoWindow out of the array looping (One infoWindow for all)
          *with a content set when it is open. This to avoid having multiple 
@@ -186,6 +184,7 @@ componentDidUpdate() {
         this.setState(state => ({
           infoWindows: state.infoWindows.concat(infoWindow)
         }))
+
   }
         
   testMe = query => {
@@ -218,6 +217,14 @@ componentDidUpdate() {
     })
   } 
 
+handleClick = (e) => {
+  console.log('wow')
+}
+
+ 
+ /*  showModal = () => {
+    fetch(`https://api.foursquare.com/v2/venues/${this.}`)
+  } */
 
 
   render() {
