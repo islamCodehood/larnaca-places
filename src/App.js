@@ -5,6 +5,8 @@ import Places from "./Places";
 import Map from "./Map";
 import escapeRegExp from "escape-string-regexp";
 import sortBy from "sort-by";
+import ReactDOM from "react-dom";
+import InfoWindow from "./InfoWindow";
 
 class App extends Component {
   state = {
@@ -55,143 +57,149 @@ class App extends Component {
     ],
     listedPlaces: [],
     map: null,
-    query: '',
-    selectedPlace: '',
+    query: "",
+    selectedPlace: "",
     infoWindows: [],
-    placesId : [],
-    clientId : 'ZBPGPJ4YEZFLSXOFYWBMIWDYVA3I211NBJXN1T5ZCV3PEI0C',
-    clientSecret : '5GWJZPVSPM5XYL1CMQQK1J1YW2QQGQKADZ5VTYQISTWYC4TX' 
+    placesId: [],
+    clientId: "ZBPGPJ4YEZFLSXOFYWBMIWDYVA3I211NBJXN1T5ZCV3PEI0C",
+    clientSecret: "5GWJZPVSPM5XYL1CMQQK1J1YW2QQGQKADZ5VTYQISTWYC4TX"
   };
   componentDidMount() {
     //check if the script has not been looded yet(google is undefined)
     if (!window.google) {
-        var scriptElement = document.createElement('script');
-        scriptElement.type = 'text/javascript';
-        scriptElement.src = `https://maps.google.com/maps/api/js?libraries=places&key=AIzaSyCFLgAmdZmi8GXGUAasIOWJ-cbYhuoXkyE`;
-        //x is the first script element in the file
-        var x = document.getElementsByTagName('script')[0];
-        //insert map script before it
-        x.parentNode.insertBefore(scriptElement, x);
-        scriptElement.addEventListener('load', e => {
-          //initiate the map then
-          this.onScriptLoad()
-        })
+      var scriptElement = document.createElement("script");
+      scriptElement.type = "text/javascript";
+      scriptElement.src = `https://maps.google.com/maps/api/js?libraries=places&key=AIzaSyCFLgAmdZmi8GXGUAasIOWJ-cbYhuoXkyE`;
+      //x is the first script element in the file
+      var x = document.getElementsByTagName("script")[0];
+      //insert map script before it
+      x.parentNode.insertBefore(scriptElement, x);
+      scriptElement.addEventListener("load", e => {
+        //initiate the map then
+        this.onScriptLoad();
+      });
     } else {
-        //if the script has been looded, then initiate the map
-        this.onScriptLoad()
-      }
-    
+      //if the script has been looded, then initiate the map
+      this.onScriptLoad();
+    }
+
     //get places' ids
-/*     this.state.placesLocations.forEach(place => {
+    /*     this.state.placesLocations.forEach(place => {
       fetch(`https://api.foursquare.com/v2/venues/search?name=${(place.title).replace(/ /g, '+')}&city=larnaca&ll=${place.position.lat},${place.position.lng}&intent=match&client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180729`)
       .then(data => data.json()).then(data => place.id = data.response.venues[0].id)
     }) */
-
-}
-componentDidUpdate() {
-  //console.log(this.state.listedPlaces)
-  //console.log(this.state.query)
-  if (this.state.query) {
-    this.state.markers.forEach(marker => {
-      marker.setMap(null)
-    })
-    this.state.listedPlaces.forEach(marker => {
-      marker.setMap(this.state.map)
-    })
-  } else {
-    this.state.markers.forEach(marker => {
-      marker.setMap(this.state.map)
-    })
   }
-  if (this.state.selectedPlace) {
-    this.state.listedPlaces.forEach(place => {
-      if (place.title === this.state.selectedPlace) {
-        place.setAnimation(window.google.maps.Animation.BOUNCE)
-        setTimeout( () => {
-          place.setAnimation(null);
-      }, 400)
-      var selectedInfoWindow = this.state.infoWindows[0]
-      selectedInfoWindow.setContent(place.title + '<br>location:'+ place.position + '<br><button id="infoWindowButton">know more</button>')
-      selectedInfoWindow.addListener('closeclick', function() {
-        selectedInfoWindow.place = null;
+  componentDidUpdate() {
+    //console.log(this.state.listedPlaces)
+    //console.log(this.state.query)
+    if (this.state.query) {
+      this.state.markers.forEach(marker => {
+        marker.setMap(null);
       });
-      selectedInfoWindow.open(this.state.map, place);
-      }
-      
-    })
-    this.setState({
-      selectedPlace: ''
-    })
+      this.state.listedPlaces.forEach(marker => {
+        marker.setMap(this.state.map);
+      });
+    } else {
+      this.state.markers.forEach(marker => {
+        marker.setMap(this.state.map);
+      });
+    }
+    ///////////////////////////////////////////////////////////////
+    if (this.state.selectedPlace) {
+      this.state.listedPlaces.forEach(place => {
+        if (place.title === this.state.selectedPlace) {
+          //////Animation part
+          place.setAnimation(window.google.maps.Animation.BOUNCE);
+          setTimeout(() => {
+            place.setAnimation(null);
+          }, 400);
+          ///////InfoWindow part
+          var map = this.state.map;
+          this.showSelectedInfoWindow(place, map);
+          //selectedInfoWindow.setContent(place.title + '<br>location:'+ place.position + '<br><button id="infoWindowButton">know more</button>')
+        }
+      });
+      this.setState({
+        selectedPlace: ""
+      });
+    }
+    //////////////////////////////////////////////////////////////////////////
   }
-
-}
   onScriptLoad = () => {
     var map = new window.google.maps.Map(
-        document.getElementById("map"),
-        this.parameters);
-        this.setState({
-          map,
-        })
-        this.makeMarkers(map)
-      }
+      document.getElementById("map"),
+      this.parameters
+    );
+    this.setState({
+      map
+    });
+    this.makeMarkers(map);
+  };
 
-  makeMarkers = (map) => {
+  makeMarkers = map => {
     var bounds = new window.google.maps.LatLngBounds();
-        console.log('hi')
-        this.state.placesLocations.forEach((place, index) => {
-          var position = place.position;
-          var title = place.title;
-          var id = index;
-          var marker = new window.google.maps.Marker({
-            position,
-            title,
-            map,
-            id,
-            animation: window.google.maps.Animation.DROP
-          });
-          marker.addListener('click', function() {
-            showInfoWindow(this, infoWindow);
-          });
-          this.setState(state => ({
-            listedPlaces: state.listedPlaces.concat(marker)
-          }));
-          this.state.listedPlaces.sort(sortBy('title'))
-          this.setState(state => ({
-            markers: state.markers.concat(marker)
-          }));
-          this.state.markers.sort(sortBy('title'))
-          bounds.extend(marker.position);
-        });
-        map.fitBounds(bounds);
-        var showInfoWindow = (marker, infoWindow) => {
-          infoWindow.addListener('closeclick', function() {
-            infoWindow.marker = null;
-          });
-          infoWindow.setContent(marker.title + '<br>location:'+ marker.position + `<br><button id="infoWindowButton" type="button" title=${marker.title} onClick=${() => this.handleClick}>know more</button>`)
-          infoWindow.open(map, marker);
-          console.log(infoWindow.content)
-          infoWindow.addListener('click', function() {
-            console.log('wow')
-          })
-        }
-        /*declare the infoWindow out of the array looping (One infoWindow for all)
+    console.log("hi");
+    this.state.placesLocations.forEach((place, index) => {
+      var position = place.position;
+      var title = place.title;
+      var id = index;
+      var marker = new window.google.maps.Marker({
+        position,
+        title,
+        map,
+        id,
+        animation: window.google.maps.Animation.DROP
+      });
+      marker.addListener("click", function() {
+        showInfoWindow(this, map);
+      });
+      this.setState(state => ({
+        listedPlaces: state.listedPlaces.concat(marker)
+      }));
+      this.state.listedPlaces.sort(sortBy("title"));
+      this.setState(state => ({
+        markers: state.markers.concat(marker)
+      }));
+      this.state.markers.sort(sortBy("title"));
+      bounds.extend(marker.position);
+    });
+    map.fitBounds(bounds);
+
+    /*declare the infoWindow out of the array looping (One infoWindow for all)
          *with a content set when it is open. This to avoid having multiple 
          *infoWindows at the same time.*/
-        var infoWindow = new window.google.maps.InfoWindow({
-          content: ''
-        });
-        //create a state of infoWindow to be able to use it outside of  makeMarker function.
-        this.setState(state => ({
-          infoWindows: state.infoWindows.concat(infoWindow)
-        }))
+    var infoWindow = new window.google.maps.InfoWindow({
+      content: '<div id="infoWindow">'
+    });
+    //create a state of infoWindow to be able to use it outside of  makeMarker function.
+    this.setState(state => ({
+      infoWindows: state.infoWindows.concat(infoWindow)
+    }));
+    var showInfoWindow = (marker, map) => {
+      infoWindow.addListener("closeclick", function() {
+        infoWindow.marker = null;
+      });
+      //infoWindow.setContent(marker.title + '<br>location:'+ marker.position + `<br><button id="infoWindowButton" type="button" title=${marker.title} onClick=${() => this.handleClick}>know more</button>`)
+      infoWindow.addListener("domready", () => {
+        ReactDOM.render(<InfoWindow />, document.getElementById("infoWindow"));
+      });
+      infoWindow.open(map, marker);
+    };
+  };
 
-  }
-        
+  /* showInfoWindow = (marker, map) => {
+    infoWindow.addListener('closeclick', function() {
+      infoWindow.marker = null;
+    });
+    infoWindow.setContent(marker.title + '<br>location:'+ marker.position + `<br><button id="infoWindowButton" type="button" title=${marker.title} onClick=${() => this.handleClick}>know more</button>`)
+    infoWindow.open(map, marker);
+  } */
+
   testMe = query => {
     console.log(query);
     if (query) {
       const searchText = new RegExp(escapeRegExp(query), "i");
-      
+
       this.setState(state => ({
         listedPlaces: state.markers.filter(marker =>
           searchText.test(marker.title)
@@ -199,42 +207,48 @@ componentDidUpdate() {
       }));
       this.setState({
         query: query
-      })
+      });
     } else {
       this.setState(state => ({
         listedPlaces: state.markers
       }));
-      this.state.listedPlaces.sort(sortBy('title'))
+      this.state.listedPlaces.sort(sortBy("title"));
       this.setState({
         query: query
-      })
+      });
     }
   };
 
-  selectPlace = (selectedPlace) => {
+  selectPlace = selectedPlace => {
     this.setState({
       selectedPlace
-    })
-  } 
+    });
+  };
 
-handleClick = (e) => {
-  console.log('wow')
-}
+  handleClick = e => {
+    console.log("wow");
+  };
 
- 
- /*  showModal = () => {
+  showSelectedInfoWindow = (place, map) => {
+    const selectedInfoWindow = this.state.infoWindows[0];
+    selectedInfoWindow.addListener("closeclick", function() {
+      selectedInfoWindow.place = null;
+    });
+    selectedInfoWindow.addListener("domready", () => {
+      ReactDOM.render(<InfoWindow />, document.getElementById("infoWindow"));
+    });
+    selectedInfoWindow.open(map, place);
+  };
+  /*  showModal = () => {
     fetch(`https://api.foursquare.com/v2/venues/${this.}`)
   } */
 
-
   render() {
-
     return (
-      
       <div className="App">
         <Burger />
-        <Places 
-          listedPlaces={this.state.listedPlaces} 
+        <Places
+          listedPlaces={this.state.listedPlaces}
           testMe={this.testMe}
           selectPlace={this.selectPlace}
           filterPlace={this.filterPlace}
