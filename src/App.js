@@ -10,6 +10,7 @@ import InfoWindow from "./InfoWindow";
 
 class App extends Component {
   state = {
+    places: [],
     markers: [],
     placesLocations: [
       {
@@ -58,11 +59,11 @@ class App extends Component {
     query: "",
     selectedPlace: "",
     infoWindows: [],
-    placeId: [],
     clientId: "ZBPGPJ4YEZFLSXOFYWBMIWDYVA3I211NBJXN1T5ZCV3PEI0C",
     clientSecret: "5GWJZPVSPM5XYL1CMQQK1J1YW2QQGQKADZ5VTYQISTWYC4TX"
   };
   componentDidMount() {
+    this.getPlaces()
     //citation: http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries/
     //check if the script has not been looded yet(google is undefined)
     if (!window.google) {
@@ -81,12 +82,6 @@ class App extends Component {
       //if the script has been looded, then initiate the map
       this.onScriptLoad();
     }
-    
-    //get places' ids
-    /*     this.state.placesLocations.forEach(place => {
-      fetch(`https://api.foursquare.com/v2/venues/search?name=${(place.title).replace(/ /g, '+')}&city=larnaca&ll=${place.position.lat},${place.position.lng}&intent=match&client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180729`)
-      .then(data => data.json()).then(data => place.id = data.response.venues[0].id)
-    }) */
   }
   componentDidUpdate() {
     //console.log(this.state.placeId)
@@ -125,6 +120,7 @@ class App extends Component {
     }
     //////////////////////////////////////////////////////////////////////////
   }
+
   onScriptLoad = () => {
     var map = new window.google.maps.Map(
       document.getElementById("map"),
@@ -178,7 +174,6 @@ class App extends Component {
       infoWindow.addListener("closeclick", function() {
         infoWindow.marker = null;
       });
-      console.log(marker.position.lat())
       //citation: http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries/
       infoWindow.addListener("domready", () => {
         ReactDOM.render(<InfoWindow 
@@ -186,6 +181,7 @@ class App extends Component {
                           lat={marker.position.lat()} 
                           lng={marker.position.lng()}
                           getId={this.getId}
+                          getDetails={this.getDetails}
                         />, 
           document.getElementById("infoWindow"));
       });
@@ -193,13 +189,16 @@ class App extends Component {
     };
   };
 
-  /* showInfoWindow = (marker, map) => {
-    infoWindow.addListener('closeclick', function() {
-      infoWindow.marker = null;
-    });
-    infoWindow.setContent(marker.title + '<br>location:'+ marker.position + `<br><button id="infoWindowButton" type="button" title=${marker.title} onClick=${() => this.handleClick}>know more</button>`)
-    infoWindow.open(map, marker);
-  } */
+  getPlaces = () => {
+    fetch(`https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=20&client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180730`)
+    .then(data => data.json())
+    .then(data => {
+      console.log(data.response.venues)
+      this.setState({
+        places: data.response.venues
+      })
+    })
+  }
 
   testMe = query => {
     console.log(query);
@@ -242,6 +241,7 @@ class App extends Component {
                         lat={place.position.lat()} 
                         lng={place.position.lng()}
                         getId={this.getId}
+                        getDetails={this.getDetails}
                       />, 
         document.getElementById("infoWindow"));
     });
@@ -252,11 +252,26 @@ class App extends Component {
     fetch(`https://api.foursquare.com/v2/venues/search?name=${(title).replace(/ /g, '+')}&city=larnaca&ll=${lat},${lng}&intent=match&client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180730`)
     .then(data => data.json())
     .then(data => {
-       this.setState({
-        placeId: data.response.venues[0].id
-      })
-    }).catch(error => {console.log(error)})
+      let id
+      return data.response.venues[0].id = id
+    })
+    .then((id) => fetch(`https://api.foursquare.com/v2/venues/${id}?client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180730`))
+    .then(data => data.json())
+    .then(data => {
+      console.log(data)
+    })
+    .catch(error => {console.log(error)})
   }
+
+  /* getDetails = () => {
+    console.log(this.state.placeId)
+    fetch(`https://api.foursquare.com/v2/venues/${this.state.placeId}?client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180730`)
+    .then(data => data.json())
+    .then(data => {
+      console.log(data)
+    })
+    .catch(error => {console.log(error)})
+  } */
 
   render() {
     return (
