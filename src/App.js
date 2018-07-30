@@ -32,8 +32,6 @@ class App extends Component {
         title: "Les Palmiers Beach Hotel",
         position: { lat: 34.914048, lng: 33.637864 }
       },
-
-      { title: "Larnaca Marina", position: { lat: 34.917673, lng: 33.638907 } },
       {
         title: "Dionyssos Restaurant",
         position: { lat: 34.910903, lng: 33.63767 }
@@ -60,11 +58,12 @@ class App extends Component {
     query: "",
     selectedPlace: "",
     infoWindows: [],
-    placesId: [],
+    placeId: [],
     clientId: "ZBPGPJ4YEZFLSXOFYWBMIWDYVA3I211NBJXN1T5ZCV3PEI0C",
     clientSecret: "5GWJZPVSPM5XYL1CMQQK1J1YW2QQGQKADZ5VTYQISTWYC4TX"
   };
   componentDidMount() {
+    //citation: http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries/
     //check if the script has not been looded yet(google is undefined)
     if (!window.google) {
       var scriptElement = document.createElement("script");
@@ -82,7 +81,7 @@ class App extends Component {
       //if the script has been looded, then initiate the map
       this.onScriptLoad();
     }
-
+    
     //get places' ids
     /*     this.state.placesLocations.forEach(place => {
       fetch(`https://api.foursquare.com/v2/venues/search?name=${(place.title).replace(/ /g, '+')}&city=larnaca&ll=${place.position.lat},${place.position.lng}&intent=match&client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180729`)
@@ -90,6 +89,7 @@ class App extends Component {
     }) */
   }
   componentDidUpdate() {
+    //console.log(this.state.placeId)
     //console.log(this.state.listedPlaces)
     //console.log(this.state.query)
     if (this.state.query) {
@@ -138,7 +138,6 @@ class App extends Component {
 
   makeMarkers = map => {
     var bounds = new window.google.maps.LatLngBounds();
-    console.log("hi");
     this.state.placesLocations.forEach((place, index) => {
       var position = place.position;
       var title = place.title;
@@ -179,9 +178,16 @@ class App extends Component {
       infoWindow.addListener("closeclick", function() {
         infoWindow.marker = null;
       });
-      //infoWindow.setContent(marker.title + '<br>location:'+ marker.position + `<br><button id="infoWindowButton" type="button" title=${marker.title} onClick=${() => this.handleClick}>know more</button>`)
+      console.log(marker.position.lat())
+      //citation: http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries/
       infoWindow.addListener("domready", () => {
-        ReactDOM.render(<InfoWindow />, document.getElementById("infoWindow"));
+        ReactDOM.render(<InfoWindow 
+                          title={marker.title} 
+                          lat={marker.position.lat()} 
+                          lng={marker.position.lng()}
+                          getId={this.getId}
+                        />, 
+          document.getElementById("infoWindow"));
       });
       infoWindow.open(map, marker);
     };
@@ -225,23 +231,32 @@ class App extends Component {
     });
   };
 
-  handleClick = e => {
-    console.log("wow");
-  };
-
   showSelectedInfoWindow = (place, map) => {
     const selectedInfoWindow = this.state.infoWindows[0];
     selectedInfoWindow.addListener("closeclick", function() {
       selectedInfoWindow.place = null;
     });
     selectedInfoWindow.addListener("domready", () => {
-      ReactDOM.render(<InfoWindow />, document.getElementById("infoWindow"));
+      ReactDOM.render(<InfoWindow 
+                        title={place.title} 
+                        lat={place.position.lat()} 
+                        lng={place.position.lng()}
+                        getId={this.getId}
+                      />, 
+        document.getElementById("infoWindow"));
     });
     selectedInfoWindow.open(map, place);
   };
-  /*  showModal = () => {
-    fetch(`https://api.foursquare.com/v2/venues/${this.}`)
-  } */
+
+  getId = (title, lat, lng) => {
+    fetch(`https://api.foursquare.com/v2/venues/search?name=${(title).replace(/ /g, '+')}&city=larnaca&ll=${lat},${lng}&intent=match&client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180730`)
+    .then(data => data.json())
+    .then(data => {
+       this.setState({
+        placeId: data.response.venues[0].id
+      })
+    }).catch(error => {console.log(error)})
+  }
 
   render() {
     return (
