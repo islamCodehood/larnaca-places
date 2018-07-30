@@ -62,9 +62,13 @@ class App extends Component {
     clientId: "ZBPGPJ4YEZFLSXOFYWBMIWDYVA3I211NBJXN1T5ZCV3PEI0C",
     clientSecret: "5GWJZPVSPM5XYL1CMQQK1J1YW2QQGQKADZ5VTYQISTWYC4TX"
   };
+  
   componentDidMount() {
     this.getPlaces()
-    //citation: http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries/
+    /*setting time out to wait for the getPlaces to return a value and update places
+    * state before loading map and markers*/
+    setTimeout(() => {
+      //citation: http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries/
     //check if the script has not been looded yet(google is undefined)
     if (!window.google) {
       var scriptElement = document.createElement("script");
@@ -82,8 +86,11 @@ class App extends Component {
       //if the script has been looded, then initiate the map
       this.onScriptLoad();
     }
+    }, 2000);
+    
   }
   componentDidUpdate() {
+    console.log(this.state.places)
     //console.log(this.state.placeId)
     //console.log(this.state.listedPlaces)
     //console.log(this.state.query)
@@ -129,14 +136,14 @@ class App extends Component {
     this.setState({
       map
     });
-    this.makeMarkers(map);
+      this.makeMarkers(map);   
   };
 
   makeMarkers = map => {
     var bounds = new window.google.maps.LatLngBounds();
-    this.state.placesLocations.forEach((place, index) => {
-      var position = place.position;
-      var title = place.title;
+    this.state.places.forEach((place, index) => {
+      var position = {lat: place.location.lat, lng: place.location.lng};
+      var title = place.name;
       var id = index;
       var marker = new window.google.maps.Marker({
         position,
@@ -192,10 +199,10 @@ class App extends Component {
   getPlaces = () => {
     fetch(`https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=20&client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180730`)
     .then(data => data.json())
-    .then(data => {
-      console.log(data.response.venues)
+    .then(data => data.response.venues)
+    .then(venues => {
       this.setState({
-        places: data.response.venues
+        places: venues
       })
     })
   }
@@ -248,7 +255,7 @@ class App extends Component {
     selectedInfoWindow.open(map, place);
   };
 
-  getId = (title, lat, lng) => {
+  /* getId = (title, lat, lng) => {
     fetch(`https://api.foursquare.com/v2/venues/search?name=${(title).replace(/ /g, '+')}&city=larnaca&ll=${lat},${lng}&intent=match&client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180730`)
     .then(data => data.json())
     .then(data => {
@@ -262,7 +269,7 @@ class App extends Component {
     })
     .catch(error => {console.log(error)})
   }
-
+ */
   /* getDetails = () => {
     console.log(this.state.placeId)
     fetch(`https://api.foursquare.com/v2/venues/${this.state.placeId}?client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180730`)
