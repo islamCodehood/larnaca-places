@@ -3,7 +3,7 @@ import React, { Component} from 'react'
 class Header extends Component {
     render() {
         return (
-            <header>Larnaca Places</header>
+            <header id="header">Larnaca Places</header>
         )
     }
 }
