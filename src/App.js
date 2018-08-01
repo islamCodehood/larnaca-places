@@ -10,90 +10,66 @@ import InfoWindow from "./InfoWindow";
 
 class App extends Component {
   state = {
+    //places searched dynamically using foursquare api
     places: [],
+    //markers to be as a source for markers for listedPlaces
     markers: [],
-    placesLocations: [
-      {
-        title: "Amorgos Boutique Hotel",
-        position: { lat: 34.913244, lng: 33.636832 }
-      },
-      {
-        title: "Aldente Cucina Italiana",
-        position: { lat: 34.913387, lng: 33.637663 }
-      },
-      {
-        title: "Maqam Al-Sultan Restaurant",
-        position: { lat: 34.910983, lng: 33.637658 }
-      },
-      {
-        title: "Hobos Steak House",
-        position: { lat: 34.914777, lng: 33.637663 }
-      },
-      {
-        title: "Les Palmiers Beach Hotel",
-        position: { lat: 34.914048, lng: 33.637864 }
-      },
-      {
-        title: "Dionyssos Restaurant",
-        position: { lat: 34.910903, lng: 33.63767 }
-      },
-      {
-        title: "Pierides Museum",
-        position: { lat: 34.916148, lng: 33.636261 }
-      },
-      {
-        title: "Larnaca Municipal Art Gallery",
-        position: { lat: 34.916932, lng: 33.63751 }
-      },
-      {
-        title: "Larnaka Municipal Market",
-        position: { lat: 34.912448, lng: 33.635955 }
-      },
-      {
-        title: "To Kafe Tis Chrysanthi's",
-        position: { lat: 34.912564, lng: 33.635739 }
-      }
-    ],
+    //markers to do work on them
     listedPlaces: [],
+    //map value to be used outside the map initiation function
     map: null,
+    //to check if there is any text in search form box to filter places
     query: "",
+    //place selected when clicking a place in list tocompare its title with listedPlaces title
     selectedPlace: "",
+    //to store the currently used infoWindo
     infoWindows: [],
-    clientId: "ZBPGPJ4YEZFLSXOFYWBMIWDYVA3I211NBJXN1T5ZCV3PEI0C",
-    clientSecret: "5GWJZPVSPM5XYL1CMQQK1J1YW2QQGQKADZ5VTYQISTWYC4TX"
+    //client id and client secret to be used in fetching api from foursquare api (unchanged)
+    clientId: "0FSPUJ55OAZ2XIZDWO54KRR5P4KYOGNW2MC21JPHGIQIJ0LG",
+    clientSecret: "2GY12T2KTPRUUPYZYTEJATVFOU00T1D1PYDCMSJ22K5AONRQ",
+    //to store the current marker (place) formattedAddress tom be used
+    address: "",
+    placeId: "",
+    venues: [],
+    bestPhoto: "",
+    category: []
   };
-  
+
   componentDidMount() {
-    this.getPlaces()
+    //get places dynamically from foursquare api
+    this.getPlaces();
+
     /*setting time out to wait for the getPlaces to return a value and update places
     * state before loading map and markers*/
     setTimeout(() => {
       //citation: http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries/
-    //check if the script has not been looded yet(google is undefined)
-    if (!window.google) {
-      var scriptElement = document.createElement("script");
-      scriptElement.type = "text/javascript";
-      scriptElement.src = `https://maps.google.com/maps/api/js?libraries=places&key=AIzaSyCFLgAmdZmi8GXGUAasIOWJ-cbYhuoXkyE`;
-      //x is the first script element in the file
-      var x = document.getElementsByTagName("script")[0];
-      //insert map script before it
-      x.parentNode.insertBefore(scriptElement, x);
-      scriptElement.addEventListener("load", e => {
-        //initiate the map then
+      //check if the script has not been looded yet(google is undefined)
+      if (!window.google) {
+        var scriptElement = document.createElement("script");
+        scriptElement.type = "text/javascript";
+        scriptElement.src = `https://maps.google.com/maps/api/js?libraries=places&key=AIzaSyCFLgAmdZmi8GXGUAasIOWJ-cbYhuoXkyE`;
+        //x is the first script element in the file
+        var x = document.getElementsByTagName("script")[0];
+        //insert map script before it
+        x.parentNode.insertBefore(scriptElement, x);
+        scriptElement.addEventListener("load", e => {
+          //initiate the map then
+          this.onScriptLoad();
+        });
+      } else {
+        //if the script has been looded, then initiate the map
         this.onScriptLoad();
-      });
-    } else {
-      //if the script has been looded, then initiate the map
-      this.onScriptLoad();
-    }
-    }, 2000);
-    
+      }
+    }, 3000);
   }
+
   componentDidUpdate() {
-    console.log(this.state.places)
-    //console.log(this.state.placeId)
+    //testing
+    //console.log(this.state.places)
+    //console.log(this.state.venues)
     //console.log(this.state.listedPlaces)
     //console.log(this.state.query)
+    ////Check if the query contains any text to search for places
     if (this.state.query) {
       this.state.markers.forEach(marker => {
         marker.setMap(null);
@@ -108,17 +84,19 @@ class App extends Component {
     }
     ///////////////////////////////////////////////////////////////
     if (this.state.selectedPlace) {
-      this.state.listedPlaces.forEach(place => {
-        if (place.title === this.state.selectedPlace) {
+      this.state.listedPlaces.forEach(listedPlace => {
+        if (listedPlace.title === this.state.selectedPlace) {
           //////Animation part
-          place.setAnimation(window.google.maps.Animation.BOUNCE);
+          listedPlace.setAnimation(window.google.maps.Animation.BOUNCE);
           setTimeout(() => {
-            place.setAnimation(null);
+            listedPlace.setAnimation(null);
           }, 400);
           ///////InfoWindow part
           var map = this.state.map;
-          this.showSelectedInfoWindow(place, map);
-          //selectedInfoWindow.setContent(place.title + '<br>location:'+ place.position + '<br><button id="infoWindowButton">know more</button>')
+          const place = this.state.places.find(
+            place => place.name === this.state.selectedPlace
+          );
+          this.showSelectedInfoWindow(listedPlace, map, place);
         }
       });
       this.setState({
@@ -128,6 +106,41 @@ class App extends Component {
     //////////////////////////////////////////////////////////////////////////
   }
 
+  showSelectedInfoWindow = (listedPlace, map, place) => {
+    const selectedInfoWindow = this.state.infoWindows[0];
+    var address = place.location.formattedAddress.join(", ");
+    this.setState({
+      placeId: place.id
+    });
+    selectedInfoWindow.addListener("closeclick", function() {
+      selectedInfoWindow.listedPlace = null;
+    });
+    selectedInfoWindow.addListener("domready", () => {
+      ReactDOM.render(
+        <InfoWindow
+          title={listedPlace.title}
+          lat={listedPlace.position.lat()}
+          lng={listedPlace.position.lng()}
+          //getId={this.getId}
+          getDetails={() => this.getDetails}
+          //getAddress={this.getAddress}
+          address={address}
+          bestPhoto={this.state.bestPhoto}
+          category={this.state.category.join(',')}
+        />,
+        document.getElementById("infoWindow")
+      );
+    });
+    selectedInfoWindow.open(map, listedPlace);
+    this.setState({
+      bestPhoto: ''
+    })
+    this.setState({
+      category: ''
+    })
+    this.getBestPhotoAndCategory();
+  };
+
   onScriptLoad = () => {
     var map = new window.google.maps.Map(
       document.getElementById("map"),
@@ -136,13 +149,13 @@ class App extends Component {
     this.setState({
       map
     });
-      this.makeMarkers(map);   
+    this.makeMarkers(map);
   };
 
   makeMarkers = map => {
     var bounds = new window.google.maps.LatLngBounds();
     this.state.places.forEach((place, index) => {
-      var position = {lat: place.location.lat, lng: place.location.lng};
+      var position = { lat: place.location.lat, lng: place.location.lng };
       var title = place.name;
       var id = index;
       var marker = new window.google.maps.Marker({
@@ -153,7 +166,7 @@ class App extends Component {
         animation: window.google.maps.Animation.DROP
       });
       marker.addListener("click", function() {
-        showInfoWindow(this, map);
+        showInfoWindow(this, map, place);
       });
       this.setState(state => ({
         listedPlaces: state.listedPlaces.concat(marker)
@@ -177,41 +190,106 @@ class App extends Component {
     this.setState(state => ({
       infoWindows: state.infoWindows.concat(infoWindow)
     }));
-    var showInfoWindow = (marker, map) => {
+    var showInfoWindow = (marker, map, place) => {
+      var address = place.location.formattedAddress.join(", ");
+      this.setState({
+        placeId: place.id
+      });
       infoWindow.addListener("closeclick", function() {
         infoWindow.marker = null;
       });
       //citation: http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries/
       infoWindow.addListener("domready", () => {
-        ReactDOM.render(<InfoWindow 
-                          title={marker.title} 
-                          lat={marker.position.lat()} 
-                          lng={marker.position.lng()}
-                          getId={this.getId}
-                          getDetails={this.getDetails}
-                        />, 
-          document.getElementById("infoWindow"));
+        ReactDOM.render(
+          <InfoWindow
+            title={marker.title}
+            lat={marker.position.lat()}
+            lng={marker.position.lng()}
+            address={address}
+            bestPhoto={this.state.bestPhoto}
+            id={place.id}
+            category={this.state.category.join(',')}
+          />,
+          document.getElementById("infoWindow")
+        );
       });
       infoWindow.open(map, marker);
+      this.setState({
+        bestPhoto: ''
+      })
+      this.setState({
+        category: ''
+      })
+      this.getBestPhotoAndCategory();
     };
   };
 
   getPlaces = () => {
-    fetch(`https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=20&client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180730`)
-    .then(data => data.json())
-    .then(data => data.response.venues)
-    .then(venues => {
-      this.setState({
-        places: venues
-      })
+    //fetch places from foursquare api using search venue then store them in places state
+    fetch(
+      `https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=5&client_id=${
+        this.state.clientId
+      }&client_secret=${this.state.clientSecret}&v=20180730`
+    )
+      .then(data => data.json())
+      .then(data => data.response.venues)
+      .then(venues =>
+        venues.forEach(place => {
+          console.log(place);
+          this.setState(state => ({
+            places: state.places.concat(place)
+          }));
+          //then fetch each place details using the place id and store these details in a venues state
+          fetch(
+            `https://api.foursquare.com/v2/venues/${place.id}?client_id=${
+              this.state.clientId
+            }&client_secret=${this.state.clientSecret}&v=20180730`
+          )
+            .then(data => data.json())
+            .then(data => {
+              console.log(data);
+              this.setState(state => ({
+                venues: state.venues.concat(data.response.venue)
+              }));
+            });
+        })
+      );
+  };
+
+   getBestPhotoAndCategory = () => {
+    this.setState({
+      bestPhoto: ''
     })
-  }
+    this.setState({
+      category: ''
+    })
+    this.state.venues
+      .filter(venue => venue.id === this.state.placeId)
+      .map(venue => {
+        if (venue.bestPhoto) {
+          this.setState({
+            bestPhoto: venue.bestPhoto.prefix + "300x300" + venue.bestPhoto.suffix
+          });
+        }        
+        if(venue.categories) {
+          this.setState({
+            category : venue.categories.map(category => category.name)
+          });
+        } else {
+          this.setState({
+            category : ['No Data Available']
+          });
+        }
+      });
+  };
+ 
+ 
 
   testMe = query => {
     console.log(query);
     if (query) {
+      //to test the query text (and ignore caps) against matching places names(marker title)
       const searchText = new RegExp(escapeRegExp(query), "i");
-
       this.setState(state => ({
         listedPlaces: state.markers.filter(marker =>
           searchText.test(marker.title)
@@ -237,65 +315,53 @@ class App extends Component {
     });
   };
 
-  showSelectedInfoWindow = (place, map) => {
-    const selectedInfoWindow = this.state.infoWindows[0];
-    selectedInfoWindow.addListener("closeclick", function() {
-      selectedInfoWindow.place = null;
-    });
-    selectedInfoWindow.addListener("domready", () => {
-      ReactDOM.render(<InfoWindow 
-                        title={place.title} 
-                        lat={place.position.lat()} 
-                        lng={place.position.lng()}
-                        getId={this.getId}
-                        getDetails={this.getDetails}
-                      />, 
-        document.getElementById("infoWindow"));
-    });
-    selectedInfoWindow.open(map, place);
+  openCloseDrawer = () => {
+    const drawer = document.getElementById("places-section");
+    const rightSection = document.getElementById("right-section");
+    const searchArea = document.getElementById("search-area");
+    const header = document.getElementById("header");
+    if (drawer.clientWidth > 0) {
+      drawer.style.width = 0;
+      rightSection.style.width = "100%";
+      searchArea.style.visibility = "hidden";
+      header.style.visibility = "hidden";
+      searchArea.style.transitionProperty = "visibility";
+      header.style.transitionProperty = "visibility";
+      searchArea.style.transitionDuration = "0.2s";
+      header.style.transitionDuration = "0.2s";
+      searchArea.style.transitionDelay = "0s";
+      header.style.transitionDelay = "0s";
+    } else {
+      drawer.style.width = "25%";
+      rightSection.style.width = "75%";
+      searchArea.style.visibility = "visible";
+      header.style.visibility = "visible";
+      searchArea.style.transitionProperty = "visibility";
+      header.style.transitionProperty = "visibility";
+      searchArea.style.transitionDuration = "0.8s";
+      header.style.transitionDuration = "0.8s";
+      searchArea.style.transitionDelay = "0.7s";
+      header.style.transitionDelay = "0.7s";
+    }
   };
-
-  /* getId = (title, lat, lng) => {
-    fetch(`https://api.foursquare.com/v2/venues/search?name=${(title).replace(/ /g, '+')}&city=larnaca&ll=${lat},${lng}&intent=match&client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180730`)
-    .then(data => data.json())
-    .then(data => {
-      let id
-      return data.response.venues[0].id = id
-    })
-    .then((id) => fetch(`https://api.foursquare.com/v2/venues/${id}?client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180730`))
-    .then(data => data.json())
-    .then(data => {
-      console.log(data)
-    })
-    .catch(error => {console.log(error)})
-  }
- */
-  /* getDetails = () => {
-    console.log(this.state.placeId)
-    fetch(`https://api.foursquare.com/v2/venues/${this.state.placeId}?client_id=${this.state.clientId}&client_secret=${this.state.clientSecret}&v=20180730`)
-    .then(data => data.json())
-    .then(data => {
-      console.log(data)
-    })
-    .catch(error => {console.log(error)})
-  } */
 
   render() {
     return (
-      <div className="App">
-        <Burger />
+      <div className="App" id="app">
         <Places
           listedPlaces={this.state.listedPlaces}
           testMe={this.testMe}
           selectPlace={this.selectPlace}
-          filterPlace={this.filterPlace}
         />
-        <Map
-          parameters={{
-            center: { lat: 34.900253, lng: 33.623172 },
-            zoom: 13
-          }}
-        />
+        <div id="right-section">
+          <Burger handleClick={this.openCloseDrawer} />
+          <Map
+            parameters={{
+              center: { lat: 34.900253, lng: 33.623172 },
+              zoom: 13
+            }}
+          />
+        </div>
       </div>
     );
   }
