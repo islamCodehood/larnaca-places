@@ -3,6 +3,7 @@ import "./App.css";
 import Burger from "./Burger";
 import Places from "./Places";
 import Map from "./Map";
+import Modal from "./Modal"
 import escapeRegExp from "escape-string-regexp";
 import sortBy from "sort-by";
 import ReactDOM from "react-dom";
@@ -32,13 +33,18 @@ class App extends Component {
     placeId: "",
     venues: [],
     bestPhoto: "",
-    category: []
+    category: [],
+    title: "",
+    likes: '',
+    hours: '',
+    rating: '',
+    ratingColor: ''
   };
 
   componentDidMount() {
     //get places dynamically from foursquare api
     this.getPlaces();
-
+    
     /*setting time out to wait for the getPlaces to return a value and update places
     * state before loading map and markers*/
     setTimeout(() => {
@@ -64,11 +70,6 @@ class App extends Component {
   }
 
   componentDidUpdate() {
-    //testing
-    //console.log(this.state.places)
-    //console.log(this.state.venues)
-    //console.log(this.state.listedPlaces)
-    //console.log(this.state.query)
     ////Check if the query contains any text to search for places
     if (this.state.query) {
       this.state.markers.forEach(marker => {
@@ -84,6 +85,7 @@ class App extends Component {
     }
     ///////////////////////////////////////////////////////////////
     if (this.state.selectedPlace) {
+      
       this.state.listedPlaces.forEach(listedPlace => {
         if (listedPlace.title === this.state.selectedPlace) {
           //////Animation part
@@ -105,41 +107,6 @@ class App extends Component {
     }
     //////////////////////////////////////////////////////////////////////////
   }
-
-  showSelectedInfoWindow = (listedPlace, map, place) => {
-    const selectedInfoWindow = this.state.infoWindows[0];
-    var address = place.location.formattedAddress.join(", ");
-    this.setState({
-      placeId: place.id
-    });
-    selectedInfoWindow.addListener("closeclick", function() {
-      selectedInfoWindow.listedPlace = null;
-    });
-    selectedInfoWindow.addListener("domready", () => {
-      ReactDOM.render(
-        <InfoWindow
-          title={listedPlace.title}
-          lat={listedPlace.position.lat()}
-          lng={listedPlace.position.lng()}
-          //getId={this.getId}
-          getDetails={() => this.getDetails}
-          //getAddress={this.getAddress}
-          address={address}
-          bestPhoto={this.state.bestPhoto}
-          category={this.state.category.join(',')}
-        />,
-        document.getElementById("infoWindow")
-      );
-    });
-    selectedInfoWindow.open(map, listedPlace);
-    this.setState({
-      bestPhoto: ''
-    })
-    this.setState({
-      category: ''
-    })
-    this.getBestPhotoAndCategory();
-  };
 
   onScriptLoad = () => {
     var map = new window.google.maps.Map(
@@ -166,6 +133,7 @@ class App extends Component {
         animation: window.google.maps.Animation.DROP
       });
       marker.addListener("click", function() {
+        
         showInfoWindow(this, map, place);
       });
       this.setState(state => ({
@@ -191,6 +159,12 @@ class App extends Component {
       infoWindows: state.infoWindows.concat(infoWindow)
     }));
     var showInfoWindow = (marker, map, place) => {
+      this.setState({
+        bestPhoto: ''
+      })
+      this.setState({
+        category: ''
+      })
       var address = place.location.formattedAddress.join(", ");
       this.setState({
         placeId: place.id
@@ -209,25 +183,74 @@ class App extends Component {
             bestPhoto={this.state.bestPhoto}
             id={place.id}
             category={this.state.category.join(',')}
+            showMore={this.showMore}
           />,
           document.getElementById("infoWindow")
         );
       });
       infoWindow.open(map, marker);
-      this.setState({
-        bestPhoto: ''
-      })
-      this.setState({
-        category: ''
-      })
       this.getBestPhotoAndCategory();
     };
+  };
+
+  showSelectedInfoWindow = (listedPlace, map, place) => {
+    const selectedInfoWindow = this.state.infoWindows[0];
+    var address = place.location.formattedAddress.join(", ");
+    this.setState({
+      placeId: place.id
+    });
+    selectedInfoWindow.addListener("closeclick", function() {
+      selectedInfoWindow.listedPlace = null;
+    });
+    selectedInfoWindow.addListener("domready", () => {
+      ReactDOM.render(
+        <InfoWindow
+          title={listedPlace.title}
+          lat={listedPlace.position.lat()}
+          lng={listedPlace.position.lng()}
+          //getId={this.getId}
+          getDetails={() => this.getDetails}
+          //getAddress={this.getAddress}
+          address={address}
+          bestPhoto={this.state.bestPhoto}
+          category={this.state.category.join(',')}
+          showMore={this.showMore}
+        />,
+        document.getElementById("infoWindow")
+      );
+    });
+    selectedInfoWindow.open(map, listedPlace);
+    this.getBestPhotoAndCategory();
+  };
+
+  testMe = query => {
+    console.log(query);
+    if (query) {
+      //to test the query text (and ignore caps) against matching places names(marker title)
+      const searchText = new RegExp(escapeRegExp(query), "i");
+      this.setState(state => ({
+        listedPlaces: state.markers.filter(marker =>
+          searchText.test(marker.title)
+        )
+      }));
+      this.setState({
+        query: query
+      });
+    } else {
+      this.setState(state => ({
+        listedPlaces: state.markers
+      }));
+      this.state.listedPlaces.sort(sortBy("title"));
+      this.setState({
+        query: query
+      });
+    }
   };
 
   getPlaces = () => {
     //fetch places from foursquare api using search venue then store them in places state
     fetch(
-      `https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=5&client_id=${
+      `https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=3&client_id=${
         this.state.clientId
       }&client_secret=${this.state.clientSecret}&v=20180730`
     )
@@ -256,7 +279,14 @@ class App extends Component {
       );
   };
 
-   getBestPhotoAndCategory = () => {
+  selectPlace = selectedPlace => {
+    //this.getBestPhotoAndCategory()
+    this.setState({
+      selectedPlace
+    });
+  };
+
+  getBestPhotoAndCategory = () => {
     this.setState({
       bestPhoto: ''
     })
@@ -268,7 +298,7 @@ class App extends Component {
       .map(venue => {
         if (venue.bestPhoto) {
           this.setState({
-            bestPhoto: venue.bestPhoto.prefix + "300x300" + venue.bestPhoto.suffix
+            bestPhoto: venue.bestPhoto.prefix + "300x200" + venue.bestPhoto.suffix
           });
         }        
         if(venue.categories) {
@@ -282,44 +312,33 @@ class App extends Component {
         }
       });
   };
- 
- 
 
-  testMe = query => {
-    console.log(query);
-    if (query) {
-      //to test the query text (and ignore caps) against matching places names(marker title)
-      const searchText = new RegExp(escapeRegExp(query), "i");
-      this.setState(state => ({
-        listedPlaces: state.markers.filter(marker =>
-          searchText.test(marker.title)
-        )
-      }));
-      this.setState({
-        query: query
-      });
-    } else {
-      this.setState(state => ({
-        listedPlaces: state.markers
-      }));
-      this.state.listedPlaces.sort(sortBy("title"));
-      this.setState({
-        query: query
-      });
-    }
-  };
-
-  selectPlace = selectedPlace => {
+  showMore = (title) => {
     this.setState({
-      selectedPlace
-    });
-  };
+      title,
+    })
+    this.state.venues
+      .filter(venue => venue.id === this.state.placeId)
+      .map(venue => {
+        this.setState({
+          likes: venue.likes.summary
+        })
+        this.setState({
+          rating: venue.rating
+        })
+         this.setState({
+          ratingColor: venue.ratingColor
+        }) 
+      })
+    
+  }
 
   openCloseDrawer = () => {
     const drawer = document.getElementById("places-section");
     const rightSection = document.getElementById("right-section");
     const searchArea = document.getElementById("search-area");
     const header = document.getElementById("header");
+    const burgerHeader = document.getElementById("burger-header")
     if (drawer.clientWidth > 0) {
       drawer.style.width = 0;
       rightSection.style.width = "100%";
@@ -331,6 +350,9 @@ class App extends Component {
       header.style.transitionDuration = "0.2s";
       searchArea.style.transitionDelay = "0s";
       header.style.transitionDelay = "0s";
+      burgerHeader.style.transitionProperty ="visibility"
+      burgerHeader.style.transitionDuration = "1s"
+      burgerHeader.style.visibility = "visible"
     } else {
       drawer.style.width = "25%";
       rightSection.style.width = "75%";
@@ -342,6 +364,9 @@ class App extends Component {
       header.style.transitionDuration = "0.8s";
       searchArea.style.transitionDelay = "0.7s";
       header.style.transitionDelay = "0.7s";
+      burgerHeader.style.transitionProperty ="visibility"
+      burgerHeader.style.transitionDuration = "0.7s"
+      burgerHeader.style.visibility = "hidden"
     }
   };
 
@@ -360,6 +385,13 @@ class App extends Component {
               center: { lat: 34.900253, lng: 33.623172 },
               zoom: 13
             }}
+          />
+          <Modal 
+            title={this.state.title}
+            address={this.state.address}
+            likes={this.state.likes}
+            hours={this.state.hours}
+            rating={this.state.rating}
           />
         </div>
       </div>
