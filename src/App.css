@@ -32,6 +32,7 @@
 html,
 body {
   width: 100%;
+  position: relative;
 }
 #app {
   display: flex;
@@ -41,22 +42,35 @@ body {
 }
 
 #places-section {
-  width: 25%;
+  width: 30%;
   height: 100vh;
   background: #000;
   color: white;
   transition: width 1s;
+  overflow: auto;
+}
+
+#places-section::-webkit-scrollbar {
+  width: 6px;
+  background: #000;
+}
+
+#places-section::-webkit-scrollbar-thumb {
+  background: #000;
 }
 
 #right-section {
-  width: 75%;
+  width: 70%;
   height: 100%;
   background: #222;
+  position: fixed;
+  right: 0;
   transition: width 1s;
 }
 
 #map-section {
   width: 100%;
+  
   /*height: 100%;*/
 
 }
@@ -67,7 +81,7 @@ body {
 }
 
 #burger {
-  width: 75%;
+  width: 100%;
   height: 7vh;
   color: rgb(0, 0, 219);
   margin: 2vh 0 0 2vh;
@@ -80,8 +94,16 @@ body {
   color: blue;
 }
 
+#burger-header {
+  float: right;
+  margin-right: 4vh;
+  color: white;
+  font-size: 32px;
+  letter-spacing: 1px;
+  visibility: hidden;
+}
+
 header {
-  width: 100%;
   height: 7vh;
   font-size: 30px;
   margin: 2vh 0 0 3vh;
@@ -132,4 +154,27 @@ header {
 
 #location span {
   font-weight: 500;
+}
+
+#modal {
+  width: 0;
+  height: 600px;
+  background: #000;
+  color: white;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  transition: width 1s;
+  overflow: auto;
+}
+
+#rating-color {
+  width: 20px;
+  height: 10px;
+}
+
+#infoWindow {
+  width: 300px;
+
 }
