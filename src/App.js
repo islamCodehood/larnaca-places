@@ -11,13 +11,13 @@ import InfoWindow from "./InfoWindow";
 
 class App extends Component {
   state = {
-    //places searched dynamically using foursquare api
+    //places searched dynamically using foursquare api from function getPlaces()
     places: [],
     //markers to be as a source for markers for listedPlaces
     markers: [],
     //markers to do work on them
     listedPlaces: [],
-    //map value to be used outside the map initiation function
+    //map value to be used outside the map onScriptLoad function
     map: null,
     //to check if there is any text in search form box to filter places
     query: "",
@@ -31,6 +31,7 @@ class App extends Component {
     //to store the current marker (place) formattedAddress tom be used
     address: "",
     placeId: "",
+    //from function getPlaces(). It contains the detailed info about places that are in places state
     venues: [],
     bestPhoto: "",
     category: [],
@@ -68,7 +69,7 @@ class App extends Component {
       }
     }, 3000);
   }
-
+  
   componentDidUpdate() {
     ////Check if the query contains any text to search for places
     if (this.state.query) {
@@ -85,20 +86,20 @@ class App extends Component {
     }
     ///////////////////////////////////////////////////////////////
     if (this.state.selectedPlace) {
-      
+      console.log(this.state.selectedPlace)
       this.state.listedPlaces.forEach(listedPlace => {
         if (listedPlace.title === this.state.selectedPlace) {
+          var map = this.state.map;
+          const place = this.state.places.find(
+            place => place.name === this.state.selectedPlace
+          );
+          this.showSelectedInfoWindow(listedPlace, map, place)
           //////Animation part
           listedPlace.setAnimation(window.google.maps.Animation.BOUNCE);
           setTimeout(() => {
             listedPlace.setAnimation(null);
           }, 400);
-          ///////InfoWindow part
-          var map = this.state.map;
-          const place = this.state.places.find(
-            place => place.name === this.state.selectedPlace
-          );
-          this.showSelectedInfoWindow(listedPlace, map, place);
+          
         }
       });
       this.setState({
@@ -106,8 +107,14 @@ class App extends Component {
       });
     }
     //////////////////////////////////////////////////////////////////////////
+  
   }
-
+  selectPlace = selectedPlace => {
+    this.setState({
+      selectedPlace
+    });
+  };
+//initiate map and call makeMarkers()
   onScriptLoad = () => {
     var map = new window.google.maps.Map(
       document.getElementById("map"),
@@ -159,12 +166,6 @@ class App extends Component {
       infoWindows: state.infoWindows.concat(infoWindow)
     }));
     var showInfoWindow = (marker, map, place) => {
-      this.setState({
-        bestPhoto: ''
-      })
-      this.setState({
-        category: ''
-      })
       var address = place.location.formattedAddress.join(", ");
       this.setState({
         placeId: place.id
@@ -274,33 +275,32 @@ class App extends Component {
               this.setState(state => ({
                 venues: state.venues.concat(data.response.venue)
               }));
-            });
+            }).catch(error => console.log)
         })
-      );
+      ).catch(error => console.log(error))
   };
-
-  selectPlace = selectedPlace => {
-    //this.getBestPhotoAndCategory()
-    this.setState({
-      selectedPlace
-    });
-  };
+  
+ 
 
   getBestPhotoAndCategory = () => {
     this.setState({
       bestPhoto: ''
-    })
+    });
     this.setState({
-      category: ''
-    })
+      category: []
+    });
     this.state.venues
       .filter(venue => venue.id === this.state.placeId)
-      .map(venue => {
+      .forEach(venue => {
         if (venue.bestPhoto) {
           this.setState({
             bestPhoto: venue.bestPhoto.prefix + "300x200" + venue.bestPhoto.suffix
           });
-        }        
+        } else {
+          this.setState({
+            bestPhoto: ''
+          });
+        }
         if(venue.categories) {
           this.setState({
             category : venue.categories.map(category => category.name)
@@ -311,6 +311,7 @@ class App extends Component {
           });
         }
       });
+
   };
 
   showMore = (title) => {
@@ -319,7 +320,7 @@ class App extends Component {
     })
     this.state.venues
       .filter(venue => venue.id === this.state.placeId)
-      .map(venue => {
+      .forEach(venue => {
         this.setState({
           likes: venue.likes.summary
         })
