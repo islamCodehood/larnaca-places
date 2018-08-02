@@ -289,7 +289,12 @@ class App extends Component {
 
   getCategory = () => {
     const categoriesArray = this.state.venues.find(venue => venue.id === this.state.placeId).categories
-    categoriesArray.map(category => category.name).join(', ')
+    if (categoriesArray) {
+      return categoriesArray.map(category => category.name).join(', ')
+    } else {
+      return 'No Data Available'
+    }
+    
   }
 
   showMore = (title) => {
