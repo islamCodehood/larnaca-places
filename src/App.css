@@ -42,7 +42,7 @@ body {
 }
 
 #places-section {
-  width: 30%;
+  width: 25%;
   height: 100vh;
   background: #000;
   color: white;
@@ -60,7 +60,7 @@ body {
 }
 
 #right-section {
-  width: 70%;
+  width: 75%;
   height: 100%;
   background: #222;
   position: fixed;
