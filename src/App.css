@@ -163,18 +163,6 @@ header {
   font-weight: 500;
 }
 
-#modal {
-  width: 0;
-  height: 600px;
-  background: #000;
-  color: white;
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 1;
-  transition: width 1s;
-  overflow: auto;
-}
 
 #rating-color {
   width: 20px;
