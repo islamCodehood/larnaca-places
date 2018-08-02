@@ -3,7 +3,6 @@ import "./App.css";
 import Burger from "./Burger";
 import Places from "./Places";
 import Map from "./Map";
-import Modal from "./Modal"
 import escapeRegExp from "escape-string-regexp";
 import sortBy from "sort-by";
 import ReactDOM from "react-dom";
@@ -26,8 +25,8 @@ class App extends Component {
     //to store the currently used infoWindo
     infoWindows: [],
     //client id and client secret to be used in fetching api from foursquare api (unchanged)
-    clientId: "0FSPUJ55OAZ2XIZDWO54KRR5P4KYOGNW2MC21JPHGIQIJ0LG",
-    clientSecret: "2GY12T2KTPRUUPYZYTEJATVFOU00T1D1PYDCMSJ22K5AONRQ",
+    clientId: "ZBPGPJ4YEZFLSXOFYWBMIWDYVA3I211NBJXN1T5ZCV3PEI0C",
+    clientSecret: "5GWJZPVSPM5XYL1CMQQK1J1YW2QQGQKADZ5VTYQISTWYC4TX",
     //to store the current marker (place) formattedAddress tom be used
     address: "",
     placeId: "",
@@ -116,9 +115,119 @@ class App extends Component {
   };
 //initiate map and call makeMarkers()
   onScriptLoad = () => {
+    var styles = [
+      {
+          "featureType": "administrative",
+          "stylers": [
+              {
+                  "visibility": "off"
+              }
+          ]
+      },
+      {
+          "featureType": "poi",
+          "stylers": [
+              {
+                  "visibility": "simplified"
+              }
+          ]
+      },
+      {
+          "featureType": "road",
+          "elementType": "labels",
+          "stylers": [
+              {
+                  "visibility": "simplified"
+              }
+          ]
+      },
+      {
+          "featureType": "water",
+          "stylers": [
+              {
+                  "visibility": "simplified"
+              }
+          ]
+      },
+      {
+          "featureType": "transit",
+          "stylers": [
+              {
+                  "visibility": "simplified"
+              }
+          ]
+      },
+      {
+          "featureType": "landscape",
+          "stylers": [
+              {
+                  "visibility": "simplified"
+              }
+          ]
+      },
+      {
+          "featureType": "road.highway",
+          "stylers": [
+              {
+                  "visibility": "off"
+              }
+          ]
+      },
+      {
+          "featureType": "road.local",
+          "stylers": [
+              {
+                  "visibility": "on"
+              }
+          ]
+      },
+      {
+          "featureType": "road.highway",
+          "elementType": "geometry",
+          "stylers": [
+              {
+                  "visibility": "on"
+              }
+          ]
+      },
+      {
+          "featureType": "water",
+          "stylers": [
+              {
+                  "color": "#84afa3"
+              },
+              {
+                  "lightness": 52
+              }
+          ]
+      },
+      {
+          "stylers": [
+              {
+                  "saturation": -17
+              },
+              {
+                  "gamma": 0.36
+              }
+          ]
+      },
+      {
+          "featureType": "transit.line",
+          "elementType": "geometry",
+          "stylers": [
+              {
+                  "color": "#3f518c"
+              }
+          ]
+      }
+  ]
     var map = new window.google.maps.Map(
       document.getElementById("map"),
-      this.parameters
+      {
+        center: { lat: 34.900253, lng: 33.623172 },
+        zoom: 13,
+        styles: styles
+      }
     );
     this.setState({
       map
@@ -182,10 +291,19 @@ class App extends Component {
             bestPhoto={this.getBestPhoto()}
             id={place.id} 
             category={this.getCategory()}
-            showMore={this.showMore}
+            likes={this.getLikes()}
           />,
           document.getElementById("infoWindow")
         );
+        //Citation for the styling of info window : 
+        //http://en.marnoto.com/2014/09/5-formas-de-personalizar-infowindow.html
+        const iwOuter = document.querySelector('.gm-style-iw')
+        const iwBackground = iwOuter.previousSibling
+        if (iwBackground) {
+          iwBackground.parentElement.removeChild(iwBackground)
+        }
+        const iwCloseBtn = iwOuter.nextElementSibling
+        iwCloseBtn.classList.add('iw-close-btn')
       });
       infoWindow.open(map, marker);
     };
@@ -210,7 +328,7 @@ class App extends Component {
           address={address}
           bestPhoto={this.getBestPhoto()}
           category={this.getCategory()}
-          showMore={this.showMore}
+          likes={this.getLikes()}
         />,
         document.getElementById("infoWindow")
       );
@@ -245,7 +363,7 @@ class App extends Component {
   getPlaces = () => {
     //fetch places from foursquare api using search venue then store them in places state
     fetch(
-      `https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=3&client_id=${
+      `https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=2&client_id=${
         this.state.clientId
       }&client_secret=${this.state.clientSecret}&v=20180730`
     )
@@ -275,16 +393,20 @@ class App extends Component {
   };
 
   getBestPhoto = () => {
-    const bestPhotoObject = this.state.venues.find(venue => venue.id === this.state.placeId).bestPhoto
-    const bestPhotoSize = '300x300'
-    if(bestPhotoObject) {
-      return bestPhotoObject.prefix
-      + bestPhotoSize 
-      + bestPhotoObject.suffix
+    if (this.state.placeId) {
+      const bestPhotoObject = this.state.venues.find(venue => venue.id === this.state.placeId).bestPhoto
+      const bestPhotoSize = '280x180'
+      if(bestPhotoObject) {
+        return bestPhotoObject.prefix
+          + bestPhotoSize 
+          + bestPhotoObject.suffix
+      } else {
+        return ''
+      }
     } else {
       return ''
     }
-   
+
   }
 
   getCategory = () => {
@@ -294,28 +416,41 @@ class App extends Component {
     } else {
       return 'No Data Available'
     }
-    
   }
 
-  showMore = (title) => {
-    this.setState({
-      title,
-    })
-    this.state.venues
-      .filter(venue => venue.id === this.state.placeId)
-      .forEach(venue => {
-        this.setState({
-          likes: venue.likes.summary
-        })
-        this.setState({
-          rating: venue.rating
-        })
-         this.setState({
-          ratingColor: venue.ratingColor
-        }) 
-      })
-    
+  getName = () => {
+    if (this.state.placeId) {
+      const name = this.state.venues.find(venue => venue.id === this.state.placeId).name
+      return name
+    }
   }
+
+  getAddress = () => {
+    if (this.state.placeId) {
+      const address = this.state.venues.find(venue => venue.id === this.state.placeId).location.formattedAddress.join(", ");
+      return address
+    } else {
+      const address = 'No Data Availabla'
+      return address
+    }
+  }
+
+  getLikes = () => {
+    if (this.state.placeId) {
+      const likes = this.state.venues.find(venue => venue.id === this.state.placeId).likes.summary
+      return likes
+    } else {
+      const likes = 'No Data Availabla'
+      return likes
+    }
+  }
+
+  getRating = () => {
+    if (this.state.placeId) {
+      const rating = this.state.venues.find(venue => venue.id === this.state.placeId)
+    }
+  }
+
 
   openCloseDrawer = () => {
     const drawer = document.getElementById("places-section");
@@ -364,19 +499,8 @@ class App extends Component {
         />
         <div id="right-section">
           <Burger handleClick={this.openCloseDrawer} />
-          <Map
-            parameters={{
-              center: { lat: 34.900253, lng: 33.623172 },
-              zoom: 13
-            }}
-          />
-          <Modal 
-            title={this.state.title}
-            address={this.state.address}
-            likes={this.state.likes}
-            hours={this.state.hours}
-            rating={this.state.rating}
-          />
+          <Map/>
+
         </div>
       </div>
     );
