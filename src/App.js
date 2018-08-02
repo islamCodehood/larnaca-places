@@ -155,9 +155,7 @@ class App extends Component {
     });
     map.fitBounds(bounds);
 
-    /*declare the infoWindow out of the array looping (One infoWindow for all)
-         *with a content set when it is open. This to avoid having multiple 
-         *infoWindows at the same time.*/
+
     var infoWindow = new window.google.maps.InfoWindow({
       content: '<div id="infoWindow">'
     });
@@ -181,16 +179,15 @@ class App extends Component {
             lat={marker.position.lat()}
             lng={marker.position.lng()}
             address={address}
-            bestPhoto={this.state.bestPhoto}
-            id={place.id}
-            category={this.state.category.join(',')}
+            bestPhoto={this.getBestPhoto()}
+            id={place.id} 
+            category={this.getCategory()}
             showMore={this.showMore}
           />,
           document.getElementById("infoWindow")
         );
       });
       infoWindow.open(map, marker);
-      this.getBestPhotoAndCategory();
     };
   };
 
@@ -209,19 +206,16 @@ class App extends Component {
           title={listedPlace.title}
           lat={listedPlace.position.lat()}
           lng={listedPlace.position.lng()}
-          //getId={this.getId}
           getDetails={() => this.getDetails}
-          //getAddress={this.getAddress}
           address={address}
-          bestPhoto={this.state.bestPhoto}
-          category={this.state.category.join(',')}
+          bestPhoto={this.getBestPhoto()}
+          category={this.getCategory()}
           showMore={this.showMore}
         />,
         document.getElementById("infoWindow")
       );
     });
     selectedInfoWindow.open(map, listedPlace);
-    this.getBestPhotoAndCategory();
   };
 
   testMe = query => {
@@ -279,40 +273,24 @@ class App extends Component {
         })
       ).catch(error => console.log(error))
   };
-  
- 
 
-  getBestPhotoAndCategory = () => {
-    this.setState({
-      bestPhoto: ''
-    });
-    this.setState({
-      category: []
-    });
-    this.state.venues
-      .filter(venue => venue.id === this.state.placeId)
-      .forEach(venue => {
-        if (venue.bestPhoto) {
-          this.setState({
-            bestPhoto: venue.bestPhoto.prefix + "300x200" + venue.bestPhoto.suffix
-          });
-        } else {
-          this.setState({
-            bestPhoto: ''
-          });
-        }
-        if(venue.categories) {
-          this.setState({
-            category : venue.categories.map(category => category.name)
-          });
-        } else {
-          this.setState({
-            category : ['No Data Available']
-          });
-        }
-      });
+  getBestPhoto = () => {
+    const bestPhotoObject = this.state.venues.find(venue => venue.id === this.state.placeId).bestPhoto
+    const bestPhotoSize = '300x300'
+    if(bestPhotoObject) {
+      return bestPhotoObject.prefix
+      + bestPhotoSize 
+      + bestPhotoObject.suffix
+    } else {
+      return ''
+    }
+   
+  }
 
-  };
+  getCategory = () => {
+    const categoriesArray = this.state.venues.find(venue => venue.id === this.state.placeId).categories
+    categoriesArray.map(category => category.name).join(', ')
+  }
 
   showMore = (title) => {
     this.setState({
