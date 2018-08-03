@@ -89,7 +89,7 @@ body {
   transition: width S1s;
 }
 
-#burger:hover {
+#burger-icon:hover {
   cursor: pointer;
   color: #84afa3;
 }
@@ -98,23 +98,30 @@ body {
   float: right;
   margin-right: 4vh;
   color: #1daa82;
-  font-size: 32px;
+  font-size: 26px;
   letter-spacing: 1px;
   visibility: hidden;
+  display: flex;
+  align-items: center;
+  font-family: 'Montserrat', sans-serif;
 }
 
 header {
+  font-family: 'Montserrat', sans-serif;
   height: 7vh;
-  font-size: 30px;
+  font-size: 26px;
   margin: 2vh 0 0 3vh;
-  color: #1daa82
+  color: #1daa82;
+  display: flex;
+  align-items: center;
 }
 
 #seacrh-text-input {
   width: 81%;
   height: 4vh;
   margin: 2vh 0 0 3vh;
-  font-size: 20px;
+  font-size: 15px;
+  font-style: italic;
   /*border: none;*/
 }
 
@@ -130,7 +137,7 @@ header {
 
 #list-item {
   width: 80%;
-  min-height: 6vh;
+  min-height: 5vh;
   margin: 2vh 0 0 3vh;
   padding-left: 1vh;
   background: #222;
@@ -138,7 +145,7 @@ header {
   display: flex;
   align-items: center;
   /*justify-content: center;*/
-  font-size: 18px;
+  font-size: 15px;
   transition: transform 0.3s ease;
 }
 
@@ -149,18 +156,56 @@ header {
 }
 
 #title {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  position: absolute;
+  width: 280px;
+  top: 130px;
+  color: white;
+  background: #222;
+  height: 60px;
+  opacity: 1;
+  display: flex;
+  align-items: center;
 }
 
 #title span {
-  margin: 8px 0 0 8px;
+  padding-left: 12px;
 }
 
-#location span {
+#location,
+#category,
+#likes,
+#rating
+ {
+  max-width: 268px;
+  padding-left: 12px;
+  margin: 0 0 10px 0; 
+}
+
+#info {
+  position: absolute;
+  top: 190px;
+}
+
+#location span,
+#category span,
+#likes span,
+#rating #rating-title {
   font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+#rating span {
+  width: 23px;
+}
+
+#category span {
+  margin-top: 10px;
 }
 
 
@@ -184,4 +229,8 @@ header {
   right: 25px !important;
   top: 9px !important;
   opacity: 1 !important;
+}
+/********************************************/
+.iw-close-btn:hover {
+  opacity: 0.7 !important;
 }
