@@ -5,7 +5,7 @@ import SearchForm from "./SearchForm";
 class Places extends Component {
   render() {
     return (
-      <div id="places-section">
+      <div id="places-section" className="places-section-width places-org-width">
         <Header />
         <SearchForm
           listedPlaces={this.props.listedPlaces}
