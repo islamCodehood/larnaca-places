@@ -23,11 +23,11 @@ class SearchForm extends Component {
     return (
       <div id="search-area">
         <div id="searchForm">
-          <form onSubmit={this.filter} value={this.state.query} autoComplete="off">
+          <form value={this.state.query} autoComplete="off">
             <input
               type="text"
               id="seacrh-text-input"
-              placeholder="Enter a place"
+              placeholder="Search..."
               value={this.state.query}
               onChange={evt => this.handleChange(evt.target.value)}
             />
