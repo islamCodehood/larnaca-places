@@ -42,7 +42,6 @@ body {
 }
 
 #places-section {
-  width: 25%;
   height: 100vh;
   background: #000;
   color: white;
@@ -60,7 +59,6 @@ body {
 }
 
 #right-section {
-  width: 75%;
   height: 100%;
   background: #222;
   position: fixed;
@@ -97,7 +95,7 @@ body {
 #burger-header {
   float: right;
   margin-right: 4vh;
-  color: #1daa82;
+  color: #0fbbc7;
   font-size: 26px;
   letter-spacing: 1px;
   visibility: hidden;
@@ -108,10 +106,11 @@ body {
 
 header {
   font-family: 'Montserrat', sans-serif;
+  letter-spacing: 1px;
   height: 7vh;
   font-size: 26px;
   margin: 2vh 0 0 3vh;
-  color: #1daa82;
+  color: #0fbbc7;
   display: flex;
   align-items: center;
 }
@@ -121,8 +120,20 @@ header {
   height: 4vh;
   margin: 2vh 0 0 3vh;
   font-size: 15px;
-  font-style: italic;
   /*border: none;*/
+}
+
+::-webkit-input-placeholder {
+  font-style: italic;
+}
+:-moz-placeholder {
+  font-style: italic;  
+}
+::-moz-placeholder {
+  font-style: italic;  
+}
+:-ms-input-placeholder {  
+  font-style: italic; 
 }
 
 #list {
@@ -233,4 +244,40 @@ header {
 /********************************************/
 .iw-close-btn:hover {
   opacity: 0.7 !important;
+}
+
+.places-section-width {
+  width: 25%;
+}
+
+.right-section-width {
+  width: 75%;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.disappear {
+  width: 0;
+}
+
+/*media queries*/
+
+@media screen and (max-width: 1020px) {
+  header {
+    font-size: 22px;
+  }
+  #burger-header {
+    font-size: 22px;
+  }
+} 
+
+ @media screen and (max-width: 900px) {
+  .places-org-width {
+    width: 0;
+  }
+  .right-org-width {
+    width: 100%;
+  }
 }
