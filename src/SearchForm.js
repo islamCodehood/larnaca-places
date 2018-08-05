@@ -26,7 +26,7 @@ class SearchForm extends Component {
           <form value={this.state.query} autoComplete="off">
             <input
               type="text"
-              id="seacrh-text-input"
+              id="search-text-input"
               aria-label="Filter places"
               placeholder="Filter..."
               value={this.state.query}
@@ -37,7 +37,7 @@ class SearchForm extends Component {
         <div id="list">
           <ul id="unordered-list">
             {this.props.listedPlaces.map(marker => (
-              <li key={marker.id} onClick={this.handleClick} id="list-item">{marker.title}</li>
+              <li key={marker.id} onClick={this.handleClick} className="list-item" tabIndex="0">{marker.title}</li>
             ))}
           </ul>
         </div>
