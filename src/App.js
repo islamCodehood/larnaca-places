@@ -29,17 +29,9 @@ class App extends Component {
     clientId: "0FSPUJ55OAZ2XIZDWO54KRR5P4KYOGNW2MC21JPHGIQIJ0LG",
     clientSecret: "2GY12T2KTPRUUPYZYTEJATVFOU00T1D1PYDCMSJ22K5AONRQ",
     //to store the current marker (place) formattedAddress tom be used
-    address: "",
     placeId: "",
     //from function getPlaces(). It contains the detailed info about places that are in places state
-    venues: [],
-    bestPhoto: "",
-    category: [],
-    title: "",
-    likes: "",
-    hours: "",
-    rating: "",
-    ratingColor: ""
+    venues: []
   };
 
   componentDidMount() {
