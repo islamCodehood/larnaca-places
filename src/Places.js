@@ -3,9 +3,13 @@ import Header from "./Header";
 import SearchForm from "./SearchForm";
 
 class Places extends Component {
+  handleClick = () => {
+    this.props.closeDrawer()
+  }
   render() {
     return (
-      <div id="places-section" className="places-section-width places-org-width">
+      <div id="places-section" className="places-section-width">
+        <div className="places-closeButton" onClick={this.handleClick} >x</div>
         <Header />
         <SearchForm
           listedPlaces={this.props.listedPlaces}
