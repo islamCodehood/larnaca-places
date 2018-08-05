@@ -73,36 +73,8 @@ class App extends Component {
 
   componentDidUpdate() {
     this.checkTextBox()
-    ///////////////////////////////////////////////////////////////
     this.checkSelectedPlace()
-    window.onresize = () => {
-      const drawer = document.getElementById("places-section");
-      const rightSection = document.getElementById("right-section");
-      const burgerHeader = document.getElementById("burger-header")
-      const searchArea = document.getElementById("search-area");
-      const header = document.getElementById("header");
-      if (window.innerWidth < 900) {
-        drawer.className =''
-        rightSection.className = ''
-        burgerHeader.className = ''
-        drawer.classList.add('places-disappear')
-        rightSection.classList.add('right-full-width')
-        burgerHeader.classList.add('burger-header-visible')
-      } else {
-        drawer.className =''
-        rightSection.className = ''
-        burgerHeader.className = ''
-        searchArea.className = ''
-        header.className = ''
-        drawer.classList.add('places-section-width')
-        rightSection.classList.add('right-section-width')
-        burgerHeader.classList.add('burger-header-disappear')
-        searchArea.classList.add('search-area-visible-transition')
-        searchArea.classList.add('search-area-visible')
-        header.classList.add('header-visible')
-        header.classList.add('header-visible-transition')
-      }
-    }
+    this.layoutOnResize()
   }
 
   checkTextBox = () => {
@@ -664,6 +636,36 @@ class App extends Component {
       }
   }
 
+  layoutOnResize = () => {
+    window.onresize = () => {
+      const drawer = document.getElementById("places-section");
+      const rightSection = document.getElementById("right-section");
+      const burgerHeader = document.getElementById("burger-header")
+      const searchArea = document.getElementById("search-area");
+      const header = document.getElementById("header");
+      if (window.innerWidth < 900) {
+        drawer.className =''
+        rightSection.className = ''
+        burgerHeader.className = ''
+        drawer.classList.add('places-disappear')
+        rightSection.classList.add('right-full-width')
+        burgerHeader.classList.add('burger-header-visible')
+      } else {
+        drawer.className =''
+        rightSection.className = ''
+        burgerHeader.className = ''
+        searchArea.className = ''
+        header.className = ''
+        drawer.classList.add('places-section-width')
+        rightSection.classList.add('right-section-width')
+        burgerHeader.classList.add('burger-header-disappear')
+        searchArea.classList.add('search-area-visible-transition')
+        searchArea.classList.add('search-area-visible')
+        header.classList.add('header-visible')
+        header.classList.add('header-visible-transition')
+      }
+    }
+  }
 
   render() {
     return (
