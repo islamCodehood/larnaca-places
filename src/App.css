@@ -1,38 +1,6 @@
-.App {
-  /*text-align: center;*/
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-}
-
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
-
-.App-title {
-  font-size: 1.5em;
-}
-
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-
-/**/
 html,
 body {
   width: 100%;
-  position: relative;
 }
 #app {
   display: flex;
@@ -68,9 +36,6 @@ body {
 
 #map-section {
   width: 100%;
-  
-  /*height: 100%;*/
-
 }
 
 #map {
@@ -84,7 +49,7 @@ body {
   color: #1daa82;
   margin: 2vh 0 0 2vh;
   font-size: 28px; 
-  transition: width S1s;
+  transition: width 1s;
 }
 
 #burger-icon:hover {
@@ -98,10 +63,16 @@ body {
   color: #0fbbc7;
   font-size: 26px;
   letter-spacing: 1px;
-  visibility: hidden;
+  transition: visibility 1s;
   display: flex;
   align-items: center;
   font-family: 'Montserrat', sans-serif;
+}
+.burger-header-disappear {
+  visibility: hidden;
+}
+.burger-header-visible {
+  visibility: visible;
 }
 
 header {
@@ -115,12 +86,29 @@ header {
   align-items: center;
 }
 
+.header-visible-transition {
+  transition: visibility 0.8s;
+  transition-delay: 0.7s;
+}
+
+.header-disappear-transition {
+  transition: visibility 0.1s;
+  transition-delay: 0s;
+}
+
+.header-visible {
+  visibility: visible;
+}
+
+.header-disappear {
+  visibility: hidden;
+}
+
 #seacrh-text-input {
   width: 81%;
   height: 4vh;
   margin: 2vh 0 0 3vh;
   font-size: 15px;
-  /*border: none;*/
 }
 
 ::-webkit-input-placeholder {
@@ -155,7 +143,6 @@ header {
   color: #84afa3;
   display: flex;
   align-items: center;
-  /*justify-content: center;*/
   font-size: 15px;
   transition: transform 0.3s ease;
 }
@@ -163,7 +150,6 @@ header {
 #list-item:hover {
   cursor: pointer;
   transform: translate(1.3vh);
-  /*transform: scale(1.05);*/
 }
 
 #title {
@@ -196,9 +182,8 @@ header {
 }
 
 #info {
-  position: absolute;
-  top: 190px;
-}
+  margin-top: 20px;
+} 
 
 #location span,
 #category span,
@@ -234,6 +219,9 @@ header {
   overflow: auto;
   border: 1px solid rgb(102, 102, 102); 
 }
+
+
+
 /*Citation for the styling of info window : 
 *http://en.marnoto.com/2014/09/5-formas-de-personalizar-infowindow.html*/
 .iw-close-btn {
@@ -246,6 +234,7 @@ header {
   opacity: 0.7 !important;
 }
 
+
 .places-section-width {
   width: 25%;
 }
@@ -254,14 +243,48 @@ header {
   width: 75%;
 }
 
-.full-width {
-  width: 100%;
-}
-
-.disappear {
+.places-disappear {
   width: 0;
 }
 
+.right-full-width {
+  width: 100%;
+}
+
+.places-alt-width {
+  width: 35%;
+}
+
+.right-alt-width {
+  width: 65%;
+}
+
+.search-area-disappear-transition {
+  transition: visibility 0.1s;
+}
+
+.search-area-visible-transition {
+  transition: visibility 0.8s;
+  transition-delay: 0.7s;
+}
+
+.search-area-visible {
+  visibility: visible;
+}
+
+.search-area-disappear {
+  visibility: hidden;
+}
+
+.places-closeButton {
+  visibility: hidden;
+  color: #1daa82
+}
+
+.places-closeButton:hover {
+  cursor: pointer;
+  color: #84afa3;
+}
 /*media queries*/
 
 @media screen and (max-width: 1020px) {
@@ -271,13 +294,184 @@ header {
   #burger-header {
     font-size: 22px;
   }
+  #infoWindow {
+    width: 245px;
+    height: 365px;
+  }
+  #title {
+    width: 245px;
+  }
 } 
 
+
  @media screen and (max-width: 900px) {
-  .places-org-width {
+  .places-section-width {
+    width: 35%;
+  }
+  
+  .right-section-width {
+    width: 65%;
+  }
+
+  #infoWindow {
+    width: 230px;
+    height: 365px;
+  }
+  #title {
+    width: 230px;
+  }
+ }
+
+ @media screen and (max-width: 670px) {
+  header {
+    font-size: 20px;
+  }
+  #burger-header {
+    font-size: 20px;
+  }
+  .places-section-width {
+    width: 40%;
+  }
+  
+  .right-section-width {
+    width: 60%;
+  }
+}
+
+@media screen and (max-width: 570px) {
+  header {
+    font-size: 18px;
+  }
+  #burger-header {
+    font-size: 18px;
+  }
+  #list-item {
+    margin: 1.5vh 0 0 3vh;
+    font-size: 14px;
+  }
+  #seacrh-text-input {
+    font-size: 14px;
+  }
+  #infoWindow {
+    width: 250px; 
+    height: 182px;  
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  #infoWindow::-webkit-scrollbar {
+  width: 5px;
+  background: #eee;
+}
+
+#infoWindow::-webkit-scrollbar-thumb {
+  background: rgb(201, 200, 200);
+}
+
+#infoWindow::-webkit-scrollbar-track {
+  background: #eee;
+}
+  #title {
+    position: relative;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    width: 250px;
+    top: -45px;
+    height: 45px;
+  }
+  #location,
+  #category,
+  #likes,
+  #rating {
+  max-width: 238px;
+  margin: 0 0 5px 0; 
+  }
+  #location span,
+  #category span,
+  #likes span,
+  #rating #rating-title {
+  font-size: 12px;
+  }
+  #rating span {
+    width: 23px;
+  }
+  
+  #category span {
+    margin-top: 8px;
+  }
+  
+  #info {
+    margin-top: -35px;
+  }
+  
+}
+
+@media screen and (max-width: 500px) {
+  header {
+    font-size: 16px;
+  }
+  #burger-header {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #burger {
+    height: 5vh;
+  }
+  header {
+    height: 5vh;
+  }
+  #burger-icon {
+    font-size: 20px;
+  }
+
+  .places-section-width {
+    width: 100%;
+  }
+  
+  .right-section-width {
     width: 0;
   }
-  .right-org-width {
-    width: 100%;
+
+  .places-closeButton {
+    position: absolute;
+    top: 2%;
+    left: 90%;
+    font-size: 26px;
+    visibility: visible;
+  }
+
+  #burger-header {
+    transition: visibility 0s;
+    
+  }
+  #burger {
+    height: 5vh;
+  }
+
+  #infoWindow {
+    width: 200px; 
+    height: 182px;  
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  #title {
+    font-size: 12px;
+    width: 200px;
+  } 
+  #location,
+  #category,
+  #likes,
+  #rating {
+  font-size: 12px;
+  margin: 0 0 5px 0; 
+  }
+  #rating span {
+    width: 23px;
+  } 
+  #category {
+    margin-bottom: 10px;
   }
 }
