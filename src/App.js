@@ -74,27 +74,7 @@ class App extends Component {
   componentDidUpdate() {
     this.checkTextBox()
     ///////////////////////////////////////////////////////////////
-    if (this.state.selectedPlace) {
-      console.log(this.state.selectedPlace);
-      this.state.listedPlaces.forEach(listedPlace => {
-        if (listedPlace.title === this.state.selectedPlace) {
-          var map = this.state.map;
-          const place = this.state.places.find(
-            place => place.name === this.state.selectedPlace
-          );
-          this.showSelectedInfoWindow(listedPlace, map, place);
-          //////Animation part
-          listedPlace.setAnimation(window.google.maps.Animation.BOUNCE);
-          setTimeout(() => {
-            listedPlace.setAnimation(null);
-          }, 400);
-        }
-      });
-      this.setState({
-        selectedPlace: ""
-      });
-
-    }
+    this.checkSelectedPlace()
     window.onresize = () => {
       const drawer = document.getElementById("places-section");
       const rightSection = document.getElementById("right-section");
@@ -146,6 +126,30 @@ class App extends Component {
       selectedPlace
     });
   };
+
+  checkSelectedPlace = () => {
+    if (this.state.selectedPlace) {
+      console.log(this.state.selectedPlace);
+      this.state.listedPlaces.forEach(listedPlace => {
+        if (listedPlace.title === this.state.selectedPlace) {
+          var map = this.state.map;
+          const place = this.state.places.find(
+            place => place.name === this.state.selectedPlace
+          );
+          this.showSelectedInfoWindow(listedPlace, map, place);
+          //////Animation part
+          listedPlace.setAnimation(window.google.maps.Animation.BOUNCE);
+          setTimeout(() => {
+            listedPlace.setAnimation(null);
+          }, 400);
+        }
+      });
+      this.setState({
+        selectedPlace: ""
+      });
+
+    }
+  }
   //initiate map and call makeMarkers()
   onScriptLoad = () => {
     //Styles from https://snazzymaps.com/style/18/retro
