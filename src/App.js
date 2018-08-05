@@ -68,6 +68,7 @@ class App extends Component {
         this.onScriptLoad();
       }
     }, 3000);
+    this.layoutOnLoad()
   }
 
   componentDidUpdate() {
@@ -104,8 +105,41 @@ class App extends Component {
       this.setState({
         selectedPlace: ""
       });
+      
+
+
+
+    }
+    window.onresize = () => {
+      const drawer = document.getElementById("places-section");
+      const rightSection = document.getElementById("right-section");
+      const burgerHeader = document.getElementById("burger-header")
+      const searchArea = document.getElementById("search-area");
+      const header = document.getElementById("header");
+      if (window.innerWidth < 900) {
+        drawer.className =''
+        rightSection.className = ''
+        burgerHeader.className = ''
+        drawer.classList.add('places-disappear')
+        rightSection.classList.add('right-full-width')
+        burgerHeader.classList.add('burger-header-visible')
+      } else {
+        drawer.className =''
+        rightSection.className = ''
+        burgerHeader.className = ''
+        searchArea.className = ''
+        header.className = ''
+        drawer.classList.add('places-section-width')
+        rightSection.classList.add('right-section-width')
+        burgerHeader.classList.add('burger-header-disappear')
+        searchArea.classList.add('search-area-visible-transition')
+        searchArea.classList.add('search-area-visible')
+        header.classList.add('header-visible')
+        header.classList.add('header-visible-transition')
+      }
     }
   }
+
   selectPlace = selectedPlace => {
     this.setState({
       selectedPlace
@@ -368,14 +402,8 @@ class App extends Component {
   };
 
   getPlaces = () => {
-    //fetch places from foursquare api using search venue then store them in places state
-    /* fetch(
-      `https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=10&client_id=${
-        this.state.clientId
-      }&client_secret=${this.state.clientSecret}&v=20180730`
-    ) */
     fetch(
-      `https://api.foursquare.com/v2/venues/search?near=larnaca&intent=browse&limit=10&client_id=${
+      `https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=2&client_id=${
         this.state.clientId
       }&client_secret=${this.state.clientSecret}&v=20180730`
     )
@@ -407,11 +435,14 @@ class App extends Component {
   };
 
   getBestPhoto = () => {
+    const infoWindowWidth = document.getElementById('infoWindow').offsetWidth 
     if (this.state.placeId) {
       const bestPhotoObject = this.state.venues.find(
         venue => venue.id === this.state.placeId
       ).bestPhoto;
-      const bestPhotoSize = "280x180";
+      
+      
+      const bestPhotoSize = (infoWindowWidth-2) + "x180";
       if (bestPhotoObject) {
         return bestPhotoObject.prefix + bestPhotoSize + bestPhotoObject.suffix;
       } else {
@@ -493,43 +524,141 @@ class App extends Component {
       }
     }
   };
-
+  closeDrawer = () => {
+    const drawer = document.getElementById("places-section");
+    const rightSection = document.getElementById("right-section");
+    const searchArea = document.getElementById("search-area");
+    const header = document.getElementById("header");
+    const burgerHeader = document.getElementById("burger-header");
+    drawer.classList = ''
+    rightSection.classList = ''
+    burgerHeader.className = ''
+    searchArea.className = ''
+    header.className = ''
+    drawer.classList.add('places-disappear')
+    rightSection.classList.add('right-full-width')
+    burgerHeader.classList.add('burger-header-visible')
+    searchArea.classList.add('search-area-disappear-transition')
+    searchArea.classList.add('search-area-disappear')
+    header.classList.add('header-disappear')
+    header.classList.add('header-disappear-transition')
+  }
   openCloseDrawer = () => {
     const drawer = document.getElementById("places-section");
     const rightSection = document.getElementById("right-section");
     const searchArea = document.getElementById("search-area");
     const header = document.getElementById("header");
     const burgerHeader = document.getElementById("burger-header");
-    if (drawer.clientWidth > 0) {
-      drawer.style.width = 0;
-      rightSection.style.width = "100%";
-      searchArea.style.visibility = "hidden";
-      header.style.visibility = "hidden";
-      searchArea.style.transitionProperty = "visibility";
-      header.style.transitionProperty = "visibility";
-      searchArea.style.transitionDuration = "0.2s";
-      header.style.transitionDuration = "0.2s";
-      searchArea.style.transitionDelay = "0s";
-      header.style.transitionDelay = "0s";
-      burgerHeader.style.transitionProperty = "visibility";
-      burgerHeader.style.transitionDuration = "1s";
-      burgerHeader.style.visibility = "visible";
-    } else {
-      drawer.style.width = "25%";
-      rightSection.style.width = "75%";
-      searchArea.style.visibility = "visible";
-      header.style.visibility = "visible";
-      searchArea.style.transitionProperty = "visibility";
-      header.style.transitionProperty = "visibility";
-      searchArea.style.transitionDuration = "0.8s";
-      header.style.transitionDuration = "0.8s";
-      searchArea.style.transitionDelay = "0.7s";
-      header.style.transitionDelay = "0.7s";
-      burgerHeader.style.transitionProperty = "visibility";
-      burgerHeader.style.transitionDuration = "0.7s";
-      burgerHeader.style.visibility = "hidden";
+    if ((window.innerWidth > 900) && (drawer.classList.contains('places-section-width'))) {
+      drawer.classList = ''
+      rightSection.classList = ''
+      burgerHeader.className = ''
+      searchArea.className = ''
+      header.className = ''
+      drawer.classList.add('places-disappear')
+      rightSection.classList.add('right-full-width')
+      burgerHeader.classList.add('burger-header-visible')
+      searchArea.classList.add('search-area-disappear-transition')
+      searchArea.classList.add('search-area-disappear')
+      header.classList.add('header-disappear')
+      header.classList.add('header-disappear-transition')
+    } else if ((window.innerWidth > 900) && (drawer.classList.contains('places-disappear'))) {
+      drawer.classList = ''
+      rightSection.classList = ''
+      burgerHeader.className = ''
+      searchArea.className = ''
+      header.className = ''
+      drawer.classList.add('places-section-width')
+      rightSection.classList.add('right-section-width')
+      burgerHeader.classList.add('burger-header-disappear')
+      searchArea.classList.add('search-area-visible-transition')
+      searchArea.classList.add('search-area-visible')
+      header.classList.add('header-visible')
+      header.classList.add('header-visible-transition')
+    } else if ((window.innerWidth < 900) && (window.innerWidth > 500) && (drawer.classList.contains('places-disappear'))) {
+      drawer.classList = ''
+      rightSection.classList = ''
+      burgerHeader.className = ''
+      searchArea.className = ''
+      header.className = ''
+      drawer.classList.add('places-section-width')
+      rightSection.classList.add('right-section-width')
+      burgerHeader.classList.add('burger-header-disappear')
+      searchArea.classList.add('search-area-visible-transition')
+      searchArea.classList.add('search-area-visible')
+      header.classList.add('header-visible')
+      header.classList.add('header-visible-transition')
+    } else if ((window.innerWidth < 900) && (window.innerWidth > 500) && (drawer.classList.contains('places-section-width'))) {
+      drawer.classList = ''
+      rightSection.classList = ''
+      burgerHeader.className = ''
+      searchArea.className = ''
+      header.className = ''
+      drawer.classList.add('places-disappear')
+      rightSection.classList.add('right-full-width')
+      burgerHeader.classList.add('burger-header-visible')
+      searchArea.classList.add('search-area-disappear-transition')
+      searchArea.classList.add('search-area-disappear')
+      header.classList.add('header-disappear')
+      header.classList.add('header-disappear-transition')
+    } else if ((window.innerWidth < 500) &&  (drawer.classList.contains('places-disappear'))) {
+      drawer.classList = ''
+      rightSection.classList = ''
+      burgerHeader.className = ''
+      searchArea.className = ''
+      header.className = ''
+      drawer.classList.add('places-section-width')
+      rightSection.classList.add('right-section-width')
+      burgerHeader.classList.add('burger-header-disappear')
+      searchArea.classList.add('search-area-visible-transition')
+      searchArea.classList.add('search-area-visible')
+      header.classList.add('header-visible')
+      header.classList.add('header-visible-transition')
+    } else if ((window.innerWidth < 500) && (drawer.classList.contains('places-section-width'))) {
+      drawer.classList = ''
+      rightSection.classList = ''
+      burgerHeader.className = ''
+      searchArea.className = ''
+      header.className = ''
+      drawer.classList.add('places-disappear')
+      rightSection.classList.add('right-full-width')
+      burgerHeader.classList.add('burger-header-visible')
+      searchArea.classList.add('search-area-disappear-transition')
+      searchArea.classList.add('search-area-disappear')
+      header.classList.add('header-disappear')
+      header.classList.add('header-disappear-transition')
     }
-  };
+  }
+
+  layoutOnLoad = () => {
+    const drawer = document.getElementById("places-section");
+      const rightSection = document.getElementById("right-section");
+      const burgerHeader = document.getElementById("burger-header")
+      const searchArea = document.getElementById("search-area");
+      const header = document.getElementById("header");
+      if (window.innerWidth < 900) {
+        drawer.className =''
+        rightSection.className = ''
+        burgerHeader.className = ''
+        drawer.classList.add('places-disappear')
+        rightSection.classList.add('right-full-width')
+        burgerHeader.classList.add('burger-header-visible')
+      } else {
+        drawer.className =''
+        rightSection.className = ''
+        burgerHeader.className = ''
+        searchArea.className = ''
+        header.className = ''
+        drawer.classList.add('places-section-width')
+        rightSection.classList.add('right-section-width')
+        burgerHeader.classList.add('burger-header-disappear')
+        searchArea.classList.add('search-area-visible-transition')
+        searchArea.classList.add('search-area-visible')
+        header.classList.add('header-visible')
+        header.classList.add('header-visible-transition')
+      }
+  }
+
 
   render() {
     return (
@@ -538,8 +667,9 @@ class App extends Component {
           listedPlaces={this.state.listedPlaces}
           testMe={this.testMe}
           selectPlace={this.selectPlace}
+          closeDrawer={this.closeDrawer}
         />
-        <div id="right-section">
+        <div id="right-section" className="right-section-width">
           <Burger handleClick={this.openCloseDrawer} />
           <Map />
         </div>
