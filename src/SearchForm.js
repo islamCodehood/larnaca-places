@@ -21,7 +21,7 @@ class SearchForm extends Component {
   
   render() {
     return (
-      <div id="search-area">
+      <div id="search-area" className="">
         <div id="searchForm">
           <form value={this.state.query} autoComplete="off">
             <input
