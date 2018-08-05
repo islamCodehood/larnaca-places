@@ -8,7 +8,7 @@ class Places extends Component {
   }
   render() {
     return (
-      <div id="places-section" className="places-section-width">
+      <section id="places-section" className="places-section-width">
         <div className="places-closeButton" onClick={this.handleClick} >x</div>
         <Header />
         <SearchForm
@@ -16,7 +16,7 @@ class Places extends Component {
           filterPlaces={this.props.filterPlaces}
           selectPlace={this.props.selectPlace}
         />
-      </div>
+      </section>
     );
   }
 }
