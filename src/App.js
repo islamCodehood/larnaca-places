@@ -45,12 +45,16 @@ class App extends Component {
     }, 3000);
     //decide which layout to start with depending om viewport width
     this.layoutOnLoad()
+    
+    
   }
 
   componentDidUpdate() {
+    this.removeFromTabOrder()
     this.checkTextBox()
     this.checkSelectedPlace()
     this.layoutOnResize()
+    
   }
 
   checkScriptLoad = () => {
@@ -121,6 +125,7 @@ class App extends Component {
   }
   //initiate map and call makeMarkers()
   onScriptLoad = () => {
+    
     //Styles from https://snazzymaps.com/style/18/retro
     var styles = [
       {
@@ -237,6 +242,7 @@ class App extends Component {
       map
     });
     this.makeMarkers(map);
+    
   };
 
   makeMarkers = map => {
@@ -664,20 +670,28 @@ class App extends Component {
     }
   }
 
+  removeFromTabOrder = () => {
+    const iframeElement = document.getElementsByTagName('iframe')[0]
+    if (iframeElement) {
+      iframeElement.tabIndex = -1;
+    }
+    
+  }
+
   render() {
     return (
-      <div className="App" id="app">
+      <main className="App" id="app">
         <Places
           listedPlaces={this.state.listedPlaces}
           filterPlaces={this.filterPlaces}
           selectPlace={this.selectPlace}
           closeDrawer={this.closeDrawer}
         />
-        <div id="right-section" className="right-section-width">
+        <section id="right-section" className="right-section-width">
           <Burger handleClick={this.openCloseDrawer} />
           <Map />
-        </div>
-      </div>
+        </section>
+      </main>
     );
   }
 }
