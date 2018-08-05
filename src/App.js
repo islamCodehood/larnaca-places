@@ -351,7 +351,7 @@ class App extends Component {
     selectedInfoWindow.open(map, listedPlace);
   };
 
-  testMe = query => {
+  filterPlaces = query => {
     console.log(query);
     if (query) {
       //to test the query text (and ignore caps) against matching places names(marker title)
@@ -669,7 +669,7 @@ class App extends Component {
       <div className="App" id="app">
         <Places
           listedPlaces={this.state.listedPlaces}
-          testMe={this.testMe}
+          filterPlaces={this.filterPlaces}
           selectPlace={this.selectPlace}
           closeDrawer={this.closeDrawer}
         />
