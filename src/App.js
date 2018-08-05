@@ -48,24 +48,8 @@ class App extends Component {
     /*setting time out to wait for the getPlaces to return a value and update places
     * state before loading map and markers*/
     setTimeout(() => {
-      //citation: http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries/
-      //check if the script has not been looded yet(google is undefined)
-      if (!window.google) {
-        var scriptElement = document.createElement("script");
-        scriptElement.type = "text/javascript";
-        scriptElement.src = `https://maps.google.com/maps/api/js?libraries=places&key=AIzaSyCFLgAmdZmi8GXGUAasIOWJ-cbYhuoXkyE`;
-        //x is the first script element in the file
-        var x = document.getElementsByTagName("script")[0];
-        //insert map script before it
-        x.parentNode.insertBefore(scriptElement, x);
-        scriptElement.addEventListener("load", e => {
-          //initiate the map then
-          this.onScriptLoad();
-        });
-      } else {
-        //if the script has been looded, then initiate the map
-        this.onScriptLoad();
-      }
+      
+      this.checkScriptLoad()
     }, 3000);
     //decide which layout to start with depending om viewport width
     this.layoutOnLoad()
@@ -75,6 +59,27 @@ class App extends Component {
     this.checkTextBox()
     this.checkSelectedPlace()
     this.layoutOnResize()
+  }
+
+  checkScriptLoad = () => {
+    //citation: http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries/
+    //check if the script has not been looded yet(google is undefined)
+    if (!window.google) {
+      var scriptElement = document.createElement("script");
+      scriptElement.type = "text/javascript";
+      scriptElement.src = `https://maps.google.com/maps/api/js?libraries=places&key=AIzaSyCFLgAmdZmi8GXGUAasIOWJ-cbYhuoXkyE`;
+      //x is the first script element in the file
+      var x = document.getElementsByTagName("script")[0];
+      //insert map script before it
+      x.parentNode.insertBefore(scriptElement, x);
+      scriptElement.addEventListener("load", e => {
+        //initiate the map then
+        this.onScriptLoad();
+      });
+    } else {
+      //if the script has been looded, then initiate the map
+      this.onScriptLoad();
+    }
   }
 
   checkTextBox = () => {
