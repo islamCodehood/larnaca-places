@@ -104,11 +104,15 @@ header {
   visibility: hidden;
 }
 
-#seacrh-text-input {
+#search-text-input {
   width: 81%;
   height: 4vh;
   margin: 2vh 0 0 3vh;
   font-size: 15px;
+}
+
+*:focus {
+  outline: 2px solid red;
 }
 
 ::-webkit-input-placeholder {
@@ -134,7 +138,7 @@ header {
   padding: 0;
 }
 
-#list-item {
+.list-item {
   width: 80%;
   min-height: 5vh;
   margin: 2vh 0 0 3vh;
@@ -147,7 +151,7 @@ header {
   transition: transform 0.3s ease;
 }
 
-#list-item:hover {
+.list-item:hover {
   cursor: pointer;
   transform: translate(1.3vh);
 }
@@ -345,13 +349,14 @@ header {
   #burger-header {
     font-size: 18px;
   }
-  #list-item {
+  .list-item {
     margin: 1.5vh 0 0 3vh;
     font-size: 14px;
   }
   #seacrh-text-input {
     font-size: 14px;
   }
+ 
   #infoWindow {
     width: 250px; 
     height: 182px;  
