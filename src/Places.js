@@ -13,7 +13,7 @@ class Places extends Component {
         <Header />
         <SearchForm
           listedPlaces={this.props.listedPlaces}
-          testMe={this.props.testMe}
+          filterPlaces={this.props.filterPlaces}
           selectPlace={this.props.selectPlace}
         />
       </div>

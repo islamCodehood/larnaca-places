@@ -10,7 +10,7 @@ class SearchForm extends Component {
       //trim white spaces
       query: query
     });
-    this.props.testMe(query);
+    this.props.filterPlaces(query);
   };
   handleClick = (e) => {
 
