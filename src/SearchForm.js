@@ -27,7 +27,8 @@ class SearchForm extends Component {
             <input
               type="text"
               id="seacrh-text-input"
-              placeholder="Search..."
+              aria-label="Filter places"
+              placeholder="Filter..."
               value={this.state.query}
               onChange={evt => this.handleChange(evt.target.value)}
             />
