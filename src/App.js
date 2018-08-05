@@ -45,7 +45,6 @@ class App extends Component {
   componentDidMount() {
     //get places dynamically from foursquare api
     this.getPlaces();
-
     /*setting time out to wait for the getPlaces to return a value and update places
     * state before loading map and markers*/
     setTimeout(() => {
@@ -68,23 +67,12 @@ class App extends Component {
         this.onScriptLoad();
       }
     }, 3000);
+    //decide which layout to start with depending om viewport width
     this.layoutOnLoad()
   }
 
   componentDidUpdate() {
-    ////Check if the query contains any text to search for places
-    if (this.state.query) {
-      this.state.markers.forEach(marker => {
-        marker.setMap(null);
-      });
-      this.state.listedPlaces.forEach(marker => {
-        marker.setMap(this.state.map);
-      });
-    } else {
-      this.state.markers.forEach(marker => {
-        marker.setMap(this.state.map);
-      });
-    }
+    this.checkTextBox()
     ///////////////////////////////////////////////////////////////
     if (this.state.selectedPlace) {
       console.log(this.state.selectedPlace);
@@ -105,9 +93,6 @@ class App extends Component {
       this.setState({
         selectedPlace: ""
       });
-      
-
-
 
     }
     window.onresize = () => {
@@ -137,6 +122,22 @@ class App extends Component {
         header.classList.add('header-visible')
         header.classList.add('header-visible-transition')
       }
+    }
+  }
+
+  checkTextBox = () => {
+    ////Check if the query contains any text to search for places
+    if (this.state.query) {
+      this.state.markers.forEach(marker => {
+        marker.setMap(null);
+      });
+      this.state.listedPlaces.forEach(marker => {
+        marker.setMap(this.state.map);
+      });
+    } else {
+      this.state.markers.forEach(marker => {
+        marker.setMap(this.state.map);
+      });
     }
   }
 
