@@ -4,7 +4,7 @@ class InfoWindow extends Component {
     render() {
       return (
         <div>
-            <img src={this.props.bestPhoto} alt=""/>
+            <img src={this.props.bestPhoto} alt={`${this.props.title} ${this.props.category}`}/>
             <div id="title"><span>{this.props.title}</span></div>
             <div id="info">
               <div id="category"><span>{this.props.category}</span></div>
