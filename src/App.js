@@ -31,7 +31,8 @@ class App extends Component {
     //to store the current marker (place) formattedAddress tom be used
     placeId: "",
     //from function getPlaces(). It contains the detailed info about places that are in places state
-    venues: []
+    venues: [],
+    burgerBtnLabel: ''
   };
 
   componentDidMount() {
@@ -45,7 +46,8 @@ class App extends Component {
     }, 3000);
     //decide which layout to start with depending om viewport width
     this.layoutOnLoad()
-    
+    this.changeBurgerBtnLabel()
+
     
   }
 
@@ -99,6 +101,14 @@ class App extends Component {
       selectedPlace
     });
   };
+
+  selectPlaceByKeyDown = (selectedPlace, key) => {
+    if (key === 13) {
+      this.setState({
+        selectedPlace
+      });
+    }
+  }
 
   checkSelectedPlace = () => {
     if (this.state.selectedPlace) {
@@ -314,6 +324,16 @@ class App extends Component {
         }
         const iwCloseBtn = iwOuter.nextElementSibling;
         iwCloseBtn.classList.add("iw-close-btn");
+        iwCloseBtn.tabIndex = "0"
+        iwCloseBtn.focus()
+        console.log(iwCloseBtn)
+        document.addEventListener('keypress', (evt) => {
+          if (evt.target === iwCloseBtn && evt.keyCode === 13) {
+            console.log(evt.keyCode)
+            infoWindow.close()
+          }
+        })
+
       });
       infoWindow.open(map, marker);
     };
@@ -353,6 +373,16 @@ class App extends Component {
       }
       const iwCloseBtn = iwOuter.nextElementSibling;
       iwCloseBtn.classList.add("iw-close-btn");
+      iwCloseBtn.tabIndex = "0"
+        iwCloseBtn.focus()
+        console.log(iwCloseBtn)
+        document.addEventListener('keypress', (evt) => {
+          if (evt.target === iwCloseBtn && evt.keyCode === 13) {
+            console.log(evt.keyCode)
+            selectedInfoWindow.close()
+          }
+        })
+        
     });
     selectedInfoWindow.open(map, listedPlace);
   };
@@ -529,6 +559,8 @@ class App extends Component {
     const searchArea = document.getElementById("search-area");
     const header = document.getElementById("header");
     const burgerHeader = document.getElementById("burger-header");
+    const filterTextBox = document.getElementById('search-text-input')
+    console.log(filterTextBox)
     if ((window.innerWidth > 900) && (drawer.classList.contains('places-section-width'))) {
       drawer.classList = ''
       rightSection.classList = ''
@@ -555,6 +587,9 @@ class App extends Component {
       searchArea.classList.add('search-area-visible')
       header.classList.add('header-visible')
       header.classList.add('header-visible-transition')
+      setTimeout(() => {
+        filterTextBox.focus()
+      }, 1000)
     } else if ((window.innerWidth < 900) && (window.innerWidth > 500) && (drawer.classList.contains('places-disappear'))) {
       drawer.classList = ''
       rightSection.classList = ''
@@ -568,6 +603,9 @@ class App extends Component {
       searchArea.classList.add('search-area-visible')
       header.classList.add('header-visible')
       header.classList.add('header-visible-transition')
+      setTimeout(() => {
+        filterTextBox.focus()
+      }, 1000)
     } else if ((window.innerWidth < 900) && (window.innerWidth > 500) && (drawer.classList.contains('places-section-width'))) {
       drawer.classList = ''
       rightSection.classList = ''
@@ -594,6 +632,9 @@ class App extends Component {
       searchArea.classList.add('search-area-visible')
       header.classList.add('header-visible')
       header.classList.add('header-visible-transition')
+      setTimeout(() => {
+        filterTextBox.focus()
+      }, 1000)
     } else if ((window.innerWidth < 500) && (drawer.classList.contains('places-section-width'))) {
       drawer.classList = ''
       rightSection.classList = ''
@@ -621,6 +662,10 @@ class App extends Component {
         rightSection.className = ''
         burgerHeader.className = ''
         drawer.classList.add('places-disappear')
+        searchArea.classList.add('search-area-disappear-transition')
+        searchArea.classList.add('search-area-disappear')
+        header.classList.add('header-disappear')
+        header.classList.add('header-disappear-transition')
         rightSection.classList.add('right-full-width')
         burgerHeader.classList.add('burger-header-visible')
       } else {
@@ -678,6 +723,25 @@ class App extends Component {
     
   }
 
+  changeBurgerBtnLabel = () => {
+    const drawer = document.getElementById("places-section")
+    if (drawer.classList.contains('places-disappear')) {
+      this.setState({
+        burgerBtnLabel: 'Show menu'
+      })
+    } else {
+      this.setState({
+        burgerBtnLabel: 'Hide menu'
+      })
+    }
+  }
+
+  openCloseDrawerByKeyDown = (key) => {
+    if(key === 13) {
+      this.openCloseDrawer()
+    }
+  }
+
   render() {
     return (
       <main className="App" id="app">
@@ -686,9 +750,14 @@ class App extends Component {
           filterPlaces={this.filterPlaces}
           selectPlace={this.selectPlace}
           closeDrawer={this.closeDrawer}
+          selectPlaceByKeyDown={this.selectPlaceByKeyDown}
         />
         <section id="right-section" className="right-section-width">
-          <Burger handleClick={this.openCloseDrawer} />
+          <Burger 
+            handleClick={this.openCloseDrawer} 
+            BurgerBtnLabel={this.state.burgerBtnLabel}
+            openCloseDrawerByKeyDown={this.openCloseDrawerByKeyDown}
+          />
           <Map />
         </section>
       </main>
