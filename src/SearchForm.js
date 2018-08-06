@@ -12,11 +12,16 @@ class SearchForm extends Component {
     });
     this.props.filterPlaces(query);
   };
-  handleClick = (e) => {
+  handleClick = (evt) => {
 
-    console.log(e.target.textContent, 'clicked')
-    this.props.selectPlace(e.target.textContent)
+    console.log(evt.target.textContent, 'clicked')
+    this.props.selectPlace(evt.target.textContent)
   }
+  handleKeyDown = (evt) => {
+    console.log(evt.target.textContent, evt.keyCode)
+    this.props.selectPlaceByKeyDown(evt.target.textContent, evt.keyCode)
+  }
+
 
   
   render() {
@@ -37,7 +42,13 @@ class SearchForm extends Component {
         <div id="list">
           <ul id="unordered-list">
             {this.props.listedPlaces.map(marker => (
-              <li key={marker.id} onClick={this.handleClick} className="list-item" tabIndex="0">{marker.title}</li>
+              <li 
+                key={marker.id} 
+                onClick={this.handleClick} 
+                onKeyDown={this.handleKeyDown} 
+                className="list-item" 
+                tabIndex="0">{marker.title}
+              </li>
             ))}
           </ul>
         </div>
