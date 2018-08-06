@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from 'prop-types';
 import "./App.css";
 import Burger from "./Burger";
 import Places from "./Places";
@@ -354,7 +355,6 @@ class App extends Component {
           title={listedPlace.title}
           lat={listedPlace.position.lat()}
           lng={listedPlace.position.lng()}
-          getDetails={() => this.getDetails}
           address={address}
           bestPhoto={this.getBestPhoto()}
           category={this.getCategory()}
@@ -742,6 +742,13 @@ class App extends Component {
     }
   }
 
+  closeDrawerByKeyDown = (key) => {
+    if(key === 13) {
+      this.closeDrawer()
+    }
+  }
+
+
   render() {
     return (
       <main className="App" id="app">
@@ -751,6 +758,7 @@ class App extends Component {
           selectPlace={this.selectPlace}
           closeDrawer={this.closeDrawer}
           selectPlaceByKeyDown={this.selectPlaceByKeyDown}
+          closeDrawerByKeyDown={this.closeDrawerByKeyDown}
         />
         <section id="right-section" className="right-section-width">
           <Burger 
@@ -765,4 +773,27 @@ class App extends Component {
   }
 }
 
+
+App.propType = {
+  title: PropTypes.string.isRequired,
+  lat: PropTypes.number.isRequired,
+  lng: PropTypes.number.isRequired,
+  address: PropTypes.string.isRequired,
+  bestPhoto: PropTypes.string.isRequired,
+  id: PropTypes.number.isRequired,
+  category: PropTypes.string.isRequired,
+  likes: PropTypes.string.isRequired,
+  rating: PropTypes.string.isRequired,
+  ratingColor: PropTypes.number.isRequired,
+  listedPlaces: PropTypes.array.isRequired,
+  filterPlaces: PropTypes.func.isRequired,
+  selectPlace: PropTypes.func.isRequired,
+  closeDrawer: PropTypes.func.isRequired,
+  selectPlaceByKeyDown: PropTypes.func.isRequired,
+  closeDrawerByKeyDown: PropTypes.func.isRequired,
+  handleClick: PropTypes.func.isRequired,
+  BurgerBtnLabel: PropTypes.string.isRequired,
+  openCloseDrawerByKeyDown: PropTypes.func.isRequired
+}
+ 
 export default App;
