@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from 'prop-types';
 import Header from "./Header";
 import SearchForm from "./SearchForm";
 
@@ -6,10 +7,19 @@ class Places extends Component {
   handleClick = () => {
     this.props.closeDrawer()
   }
+  handleKeyDown = (evt) => {
+    this.props.closeDrawerByKeyDown(evt.keyCode)
+  }
   render() {
     return (
       <section id="places-section" className="places-section-width">
-        <div className="places-closeButton" onClick={this.handleClick} >x</div>
+        <div 
+          className="places-closeButton" 
+          onClick={this.handleClick} 
+          tabIndex="0"
+          onKeyDown={this.handleKeyDown}
+          aria-label="Hide menu"
+        >x</div>
         <Header />
         <SearchForm
           listedPlaces={this.props.listedPlaces}
@@ -20,6 +30,15 @@ class Places extends Component {
       </section>
     );
   }
+}
+
+Places.propTypes = {
+  onClick: PropTypes.func,
+  onKeyDown: PropTypes.func,
+  listedPlaces: PropTypes.array.isRequired,
+  filterPlaces: PropTypes.func,
+  selectPlace: PropTypes.func,
+  selectPlaceByKeyDown: PropTypes.func
 }
 
 export default Places;

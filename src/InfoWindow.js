@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from 'prop-types';
 
 class InfoWindow extends Component {
     render() {
@@ -15,6 +16,12 @@ class InfoWindow extends Component {
         </div>
       );
     }
+  }
+
+  InfoWindow.PropTypes = {
+    src: PropTypes.string.isRequired,
+    alt: PropTypes.string.isRequired,
+    style: PropTypes.object.isRequired
   }
   
   export default InfoWindow;

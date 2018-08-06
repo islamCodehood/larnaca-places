@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types';
 
 class Burger extends Component {
     handleKeyDown = (evt) => {
-        evt.preventDefault()
+        /* evt.preventDefault() */
         console.log(evt.keyCode)
         this.props.openCloseDrawerByKeyDown(evt.keyCode)
     }
@@ -27,6 +28,11 @@ class Burger extends Component {
             </div>
         )
     }
+}
+
+Burger.propTypes = {
+    onClick: PropTypes.func,
+    onKeyDown: PropTypes.func
 }
 
 export default Burger

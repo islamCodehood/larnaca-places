@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from 'prop-types';
 
 
 class SearchForm extends Component {
@@ -55,6 +56,14 @@ class SearchForm extends Component {
       </div>
     );
   }
+}
+
+SearchForm.propTypes = {
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  key: PropTypes.number,
+  onClick: PropTypes.func,
+  onKeyDown: PropTypes.func
 }
 
 export default SearchForm;
