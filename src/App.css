@@ -52,7 +52,7 @@ body {
   transition: width 1s;
 }
 
-#burger-icon:hover {
+#burger-btn:hover {
   cursor: pointer;
   color: #84afa3;
 }
@@ -428,7 +428,7 @@ header {
   header {
     height: 5vh;
   }
-  #burger-icon {
+  #burger-btn {
     font-size: 20px;
   }
 
