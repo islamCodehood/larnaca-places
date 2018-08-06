@@ -75,15 +75,14 @@ body {
   visibility: visible;
 }
 
-header {
+header h1{
   font-family: 'Montserrat', sans-serif;
   letter-spacing: 1px;
   height: 7vh;
   font-size: 26px;
-  margin: 2vh 0 0 3vh;
+  margin: 0 0 0 3vh;
   color: #0fbbc7;
-  display: flex;
-  align-items: center;
+  font-weight: lighter;
 }
 
 .header-visible-transition {
@@ -438,6 +437,7 @@ header {
   
   .right-section-width {
     width: 0;
+    visibility: hidden;
   }
 
   .places-closeButton {
