@@ -15,6 +15,7 @@ class Places extends Component {
           listedPlaces={this.props.listedPlaces}
           filterPlaces={this.props.filterPlaces}
           selectPlace={this.props.selectPlace}
+          selectPlaceByKeyDown={this.props.selectPlaceByKeyDown}
         />
       </section>
     );
