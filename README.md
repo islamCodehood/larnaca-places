@@ -69,14 +69,14 @@
  
  
 ### Accessibility:
-  1. Tab order: organized and logically ordered.
-  2. Focus: is clear, trapped inside side menu when it is full screen, and added to unfocusable elements.
-  3. Semantic elements: are used where possible.
-  4. Aria roles: are present for non semantic elements.
-  5. Aria labels: are present for labeling elements like text box.
-  6. Sectioning and Land mark elements: are used where possible.
-  7. Accessible images: that use alternative text.
-  8. Assessitive devices friendly.
+  1. *Tab order*: organized and logically ordered.
+  2. *Focus*: is clear, trapped inside side menu when it is full screen, and added to unfocusable elements.
+  3. *Semantic elements*: are used where possible.
+  4. *Aria roles*: are present for non semantic elements.
+  5. *Aria labels*: are present for labeling elements like text box.
+  6. *Sectioning and Land mark elements*: are used where possible.
+  7. *Accessible images*: that use alternative text.
+  8. *Assessitive devices friendly*.
   
 ### Offline Use:
  - Application is available offline in production mood, not in development mood.
@@ -87,8 +87,14 @@
   - Download a compressed version from [here](https://github.com/Islam888/larnaca-places/archive/master.zip).
   - Decompress the app.
   - In your terminale locate the app directory and run `npm install`.
-  - After finishing run `npm start`.
-  - A browser tab will open at a localhost port 3000.
+  - To run development mood:
+    1. After finishing run `npm start`.
+    2. A browser tab will open at a localhost port 3000.
+  - To run production mood:
+    1. run `npm run build`.
+    2. Then to serve it with a static server run `npm install -g serve`.
+    3. Then run `serve -s build`.
+
   
   
 ## License
