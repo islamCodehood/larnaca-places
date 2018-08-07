@@ -144,7 +144,6 @@ class App extends Component {
     *info window which has a title the same as the value od selectedPlace.*/
 
     if (this.state.selectedPlace) {
-      console.log(this.state.selectedPlace);
       this.state.listedPlaces.forEach(listedPlace => {
         if (listedPlace.title === this.state.selectedPlace) {
           var map = this.state.map;
@@ -379,7 +378,6 @@ class App extends Component {
             //After closing info window re-focus the previous menu list item.
             const listItems = document.getElementsByClassName("list-item");
             Array.prototype.forEach.call(listItems, item => {
-              console.log(item.textContent, "/", marker.title);
               if (item.textContent === marker.title) {
                 item.focus();
               }
@@ -447,7 +445,6 @@ class App extends Component {
           //After closing info window re-focus the previous menu list item.
           const listItems = document.getElementsByClassName("list-item");
           Array.prototype.forEach.call(listItems, item => {
-            console.log(item.textContent, "/", listedPlace.title);
             if (item.textContent === listedPlace.title) {
               item.focus();
             }
@@ -495,7 +492,6 @@ class App extends Component {
       //store fetched venues in places array state
       .then(venues =>
         venues.forEach(place => {
-          console.log(place);
           this.setState(state => ({
             places: state.places.concat(place)
           }));
@@ -507,7 +503,6 @@ class App extends Component {
           )
             .then(data => data.json())
             .then(data => {
-              console.log(data);
               this.setState(state => ({
                 venues: state.venues.concat(data.response.venue)
               }));
@@ -663,7 +658,6 @@ class App extends Component {
     const header = document.getElementById("header");
     const burgerHeader = document.getElementById("burger-header");
     const filterTextBox = document.getElementById("search-text-input");
-    console.log(filterTextBox);
     if (
       window.innerWidth > 900 &&
       drawer.classList.contains("places-section-width")
