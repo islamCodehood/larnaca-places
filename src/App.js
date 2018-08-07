@@ -9,7 +9,7 @@ import sortBy from "sort-by";
 import ReactDOM from "react-dom";
 import InfoWindow from "./InfoWindow";
 import FailedRequest from "./FailedRequest";
-import FailedMapRequest from "./FailedMapRequest"
+import FailedMapRequest from "./FailedMapRequest";
 import cyprusflag from "./cyprusflag.png";
 
 class App extends Component {
@@ -53,7 +53,6 @@ class App extends Component {
     this.changeBurgerBtnLabel();
     //check if the map fails to load.
     this.failureAction();
-
   }
 
   componentDidUpdate() {
@@ -73,14 +72,14 @@ class App extends Component {
     //If the map fails to load display FailedMapRequest component
     window.gm_authFailure = () => {
       const failureElement = document.querySelector(".failed-map-request");
-      const leftSection = document.getElementById("places-section")
-      const rightSection = document.getElementById("right-section")
+      const leftSection = document.getElementById("places-section");
+      const rightSection = document.getElementById("right-section");
       failureElement.classList.add("failed-request-visible");
       //hide other components to prevent from gettng focused when tabbing
-      leftSection.style.display = "none"
-      rightSection.style.display = "none"
-    }
-  }
+      leftSection.style.display = "none";
+      rightSection.style.display = "none";
+    };
+  };
 
   checkScriptLoad = () => {
     //citation: http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries/
@@ -369,8 +368,8 @@ class App extends Component {
         //add focus to info window close button
         iwCloseBtn.focus();
         //Add aria label and role to close button of info window
-        iwCloseBtn.setAttribute('role', 'button')
-        iwCloseBtn.setAttribute('aria-label', 'Hide info window')
+        iwCloseBtn.setAttribute("role", "button");
+        iwCloseBtn.setAttribute("aria-label", "Hide info window");
         document.addEventListener("keypress", evt => {
           if (evt.target === iwCloseBtn && evt.keyCode === 13) {
             //if the target of event is close button and key pressed is enter key close info window.
@@ -436,8 +435,8 @@ class App extends Component {
       //add focus to info window close button
       iwCloseBtn.focus();
       //Add aria label and role to close button of info window
-      iwCloseBtn.setAttribute('role', 'button')
-      iwCloseBtn.setAttribute('aria-label', 'Hide info window')
+      iwCloseBtn.setAttribute("role", "button");
+      iwCloseBtn.setAttribute("aria-label", "Hide info window");
       document.addEventListener("keypress", evt => {
         if (evt.target === iwCloseBtn && evt.keyCode === 13) {
           //if the target of event is close button and key pressed is enter key close info window.
@@ -510,22 +509,22 @@ class App extends Component {
             .catch(error => {
               console.log(error);
               const failureElement = document.querySelector(".failed-request");
-              const leftSection = document.getElementById("places-section")
-              const rightSection = document.getElementById("right-section")
+              const leftSection = document.getElementById("places-section");
+              const rightSection = document.getElementById("right-section");
               failureElement.classList.add("failed-request-visible");
-              leftSection.style.display = "none"
-              rightSection.style.display = "none"
+              leftSection.style.display = "none";
+              rightSection.style.display = "none";
             });
         })
       )
       .catch(error => {
         console.log(error);
         const failureElement = document.querySelector(".failed-request");
-        const leftSection = document.getElementById("places-section")
-        const rightSection = document.getElementById("right-section")
+        const leftSection = document.getElementById("places-section");
+        const rightSection = document.getElementById("right-section");
         failureElement.classList.add("failed-request-visible");
-        leftSection.style.display = "none"
-        rightSection.style.display = "none"
+        leftSection.style.display = "none";
+        rightSection.style.display = "none";
       });
   };
 
@@ -746,7 +745,7 @@ class App extends Component {
       searchArea.classList.add("search-area-visible");
       header.classList.add("header-visible");
       header.classList.add("header-visible-transition");
-      
+
       setTimeout(() => {
         filterTextBox.focus();
       }, 1000);
