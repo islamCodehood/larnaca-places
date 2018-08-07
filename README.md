@@ -60,7 +60,12 @@
 ### Responsive Design:
 
  - It can be displayed and used with full functionality over different view ports of different devices from the smallest mobile device to the widest screen.
-  
+ 
+ ![mobile view](https://github.com/Islam888/larnaca-places/blob/master/mobile-view.png)
+ ![ipad view](https://github.com/Islam888/larnaca-places/blob/master/mobile-view2.png)
+ ![Desktop view](https://github.com/Islam888/larnaca-places/blob/master/desktop.png)
+ 
+ 
 ### Accessibility:
   1. Tab order: organized and logically ordered.
   2. Focus: is clear, trapped inside side menu when it is full screen, and added to unfocusable elements.
@@ -79,8 +84,8 @@
  
   - Download a compressed version from [here](https://github.com/Islam888/larnaca-places/archive/master.zip).
   - Decompress the app.
-  - In your terminale locate the app directory and run `npm install`
-  - After finishing run `npm start`
+  - In your terminale locate the app directory and run `npm install`.
+  - After finishing run `npm start`.
   - A browser tab will open at a localhost port 3000.
   
   
