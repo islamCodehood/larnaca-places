@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 
 class Burger extends Component {
+    //To open or close side menu with enter key when in focus
     handleKeyDown = (evt) => {
         this.props.openCloseDrawerByKeyDown(evt.keyCode)
     }

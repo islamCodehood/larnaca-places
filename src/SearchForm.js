@@ -5,19 +5,22 @@ class SearchForm extends Component {
   state = {
     query: ""
   };
+  //Check for changes in text box and update query state simultaniously
   handleChange = query => {
     this.setState({
-      //trim white spaces
-      query: query
+      query
     });
+    /*Then calling this function to transmit the query value to the parent components ending 
+    * in App.js where actions according to it happens.*/
     this.props.filterPlaces(query);
   };
   handleClick = evt => {
-    console.log(evt.target.textContent, "clicked");
+    /*Transmit the target of click text content which is the name of location to parent components ending 
+    * in App.js where actions according to it happens.*/
     this.props.selectPlace(evt.target.textContent);
   };
   handleKeyDown = evt => {
-    console.log(evt.target.textContent, evt.keyCode);
+    //Does the same like the previous func but with enter key while element is in focus.
     this.props.selectPlaceByKeyDown(evt.target.textContent, evt.keyCode);
   };
 
@@ -56,6 +59,7 @@ class SearchForm extends Component {
   }
 }
 
+//propType checking
 SearchForm.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func,

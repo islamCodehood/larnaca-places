@@ -1,5 +1,6 @@
 import React from "react";
 
+//The component that appears only when request of foursquare fails
 function FailedRequest() {
     return (
         <div className="failed-request">

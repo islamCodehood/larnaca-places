@@ -8,7 +8,7 @@ import escapeRegExp from "escape-string-regexp";
 import sortBy from "sort-by";
 import ReactDOM from "react-dom";
 import InfoWindow from "./InfoWindow";
-import FailedRequest from './FailedRequest'
+import FailedRequest from "./FailedRequest";
 import cyprusflag from "./cyprusflag.png";
 
 class App extends Component {
@@ -460,7 +460,6 @@ class App extends Component {
   getPlaces = () => {
     /*Using foursquare api search for locations around the lat, lng values with
     * a radius of 10000 meters*/
-
     fetch(
       `https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=2&client_id=${
         this.state.clientId
@@ -489,20 +488,22 @@ class App extends Component {
               }));
             })
             .catch(error => {
-              console.log(error)
-              const failureElement = document.querySelector('.failed-request')
-              failureElement.classList.add('failed-request-visible')
+              console.log(error);
+              const failureElement = document.querySelector(".failed-request");
+              failureElement.classList.add("failed-request-visible");
             });
         })
       )
-      .catch(error =>{
-        console.log(error)
-        const failureElement = document.querySelector('.failed-request')
-        failureElement.classList.add('failed-request-visible')
+      .catch(error => {
+        console.log(error);
+        const failureElement = document.querySelector(".failed-request");
+        failureElement.classList.add("failed-request-visible");
       });
   };
 
   getBestPhoto = () => {
+    //get best photo from foursquare api
+    //get info window width to use it as the photo width
     const infoWindowWidth = document.getElementById("infoWindow").offsetWidth;
     if (this.state.placeId) {
       const bestPhotoObject = this.state.venues.find(
@@ -513,6 +514,7 @@ class App extends Component {
       if (bestPhotoObject) {
         return bestPhotoObject.prefix + bestPhotoSize + bestPhotoObject.suffix;
       } else {
+        //if there is no photo return Cyprus flag photo
         return cyprusflag;
       }
     } else {
@@ -521,6 +523,7 @@ class App extends Component {
   };
 
   getCategory = () => {
+    //get category of the place from foursquare api
     if (this.state.placeId) {
       const categoriesArray = this.state.venues.find(
         venue => venue.id === this.state.placeId
@@ -528,6 +531,7 @@ class App extends Component {
       if (categoriesArray) {
         return categoriesArray.map(category => category.name).join(", ");
       } else {
+        //If there is no category
         return "No data available";
       }
     } else {
@@ -536,17 +540,20 @@ class App extends Component {
   };
 
   getName = () => {
+    //get name of place from foursquare api
     if (this.state.placeId) {
       const name = this.state.venues.find(
         venue => venue.id === this.state.placeId
       ).name;
       return name;
     } else {
+      //if there is no data avialbe regarding the place
       return "No data available. Please, try again later!";
     }
   };
 
   getLikes = () => {
+    //get likes of places from foursquare api
     if (this.state.placeId) {
       const likes = this.state.venues.find(
         venue => venue.id === this.state.placeId
@@ -554,6 +561,7 @@ class App extends Component {
       if (likes) {
         return likes;
       } else {
+        //if there is no data
         return "No data available.";
       }
     } else {
@@ -562,6 +570,7 @@ class App extends Component {
   };
 
   getRating = () => {
+    //get rating of place from foursquare api
     if (this.state.placeId) {
       const venue = this.state.venues.find(
         venue => venue.id === this.state.placeId
@@ -570,6 +579,7 @@ class App extends Component {
       if (rating) {
         return rating;
       } else {
+        //if there is no data
         return "No data available.";
       }
     } else {
@@ -578,6 +588,7 @@ class App extends Component {
   };
 
   getRatingColor = () => {
+    //get rating color to display it as a background color of rating from foursquare api
     if (this.state.placeId) {
       const venue = this.state.venues.find(
         venue => venue.id === this.state.placeId
@@ -586,11 +597,13 @@ class App extends Component {
       if (ratingColor) {
         return "#" + ratingColor;
       } else {
+        //if there is no data
         return "";
       }
     }
   };
   closeDrawer = () => {
+    //To close the side menu with the "x" close button in the smallest view port
     const drawer = document.getElementById("places-section");
     const rightSection = document.getElementById("right-section");
     const searchArea = document.getElementById("search-area");
@@ -610,6 +623,7 @@ class App extends Component {
     header.classList.add("header-disappear-transition");
   };
   openCloseDrawer = () => {
+    //To open or close side menu using hamburger button
     const drawer = document.getElementById("places-section");
     const rightSection = document.getElementById("right-section");
     const searchArea = document.getElementById("search-area");
@@ -728,6 +742,7 @@ class App extends Component {
   };
 
   layoutOnLoad = () => {
+    //To decide the layout on loading according to the view port width
     const drawer = document.getElementById("places-section");
     const rightSection = document.getElementById("right-section");
     const burgerHeader = document.getElementById("burger-header");
@@ -761,6 +776,7 @@ class App extends Component {
   };
 
   layoutOnResize = () => {
+    //To decide the layout while resizing the view port manually
     window.onresize = () => {
       const drawer = document.getElementById("places-section");
       const rightSection = document.getElementById("right-section");
@@ -792,6 +808,7 @@ class App extends Component {
   };
 
   removeFromTabOrder = () => {
+    //To remove iframe element from tab order
     const iframeElement = document.getElementsByTagName("iframe")[0];
     if (iframeElement) {
       iframeElement.tabIndex = -1;
@@ -799,6 +816,7 @@ class App extends Component {
   };
 
   changeBurgerBtnLabel = () => {
+    //Change aria label of hamburger button according to the side menu open or closed.
     const drawer = document.getElementById("places-section");
     if (drawer.classList.contains("places-disappear")) {
       this.setState({
@@ -818,6 +836,7 @@ class App extends Component {
   };
 
   closeDrawerByKeyDown = key => {
+    //To open or close side menu using keyboard
     if (key === 13) {
       this.closeDrawer();
     }
@@ -848,6 +867,7 @@ class App extends Component {
   }
 }
 
+//propType checking
 App.propType = {
   title: PropTypes.string.isRequired,
   lat: PropTypes.number.isRequired,
