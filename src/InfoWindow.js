@@ -3,7 +3,7 @@ import React from "react";
 function InfoWindow(props) {
       return (
         <div>
-            <img src={props.bestPhoto} alt={`${props.title} ${props.category}`}/>
+            <img src={props.bestPhoto} alt=""/>
             <div id="title"><h2>{props.title}</h2></div>
             <div id="info">
               <div id="category"><span>{props.category}</span></div>
