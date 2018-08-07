@@ -89,6 +89,8 @@ class App extends Component {
       var scriptElement = document.createElement("script");
       scriptElement.type = "text/javascript";
       scriptElement.src = `https://maps.google.com/maps/api/js?libraries=places&key=AIzaSyCFLgAmdZmi8GXGUAasIOWJ-cbYhuoXkyE`;
+      //to be sure it is loaded asynchronously
+      scriptElement.async = true;
       //x is the first script element in the file
       var x = document.getElementsByTagName("script")[0];
       //insert map script before it
