@@ -33,6 +33,7 @@ class Places extends Component {
           selectPlace={this.props.selectPlace}
           selectPlaceByKeyDown={this.props.selectPlaceByKeyDown}
         />
+        <footer className="places-section-width">Data Source: <a href="https://foursquare.com/">Foursquare.com</a></footer>
       </section>
     );
   }
