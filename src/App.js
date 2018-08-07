@@ -29,8 +29,8 @@ class App extends Component {
     //to store the currently used infoWindo
     infoWindows: [],
     //client id and client secret to be used in fetching api from foursquare api (unchanged)
-    clientId: "0FSPUJ55OAZ2XIZDWO54KRR5P4KYOGNW2MC21JPHGIQIJ0LG",
-    clientSecret: "2GY12T2KTPRUUPYZYTEJATVFOU00T1D1PYDCMSJ22K5AONRQ",
+    clientId: "ZBPGPJ4YEZFLSXOFYWBMIWDYVA3I211NBJXN1T5ZCV3PEI0C",
+    clientSecret: "5GWJZPVSPM5XYL1CMQQK1J1YW2QQGQKADZ5VTYQISTWYC4TX",
     //to store the current marker (place) formattedAddress tom be used
     placeId: "",
     //from function getPlaces(). It contains the detailed info about places that are in places state
@@ -369,6 +369,9 @@ class App extends Component {
         iwCloseBtn.tabIndex = "0";
         //add focus to info window close button
         iwCloseBtn.focus();
+        //Add aria label and role to close button of info window
+        iwCloseBtn.setAttribute('role', 'button')
+        iwCloseBtn.setAttribute('aria-label', 'Hide info window')
         document.addEventListener("keypress", evt => {
           if (evt.target === iwCloseBtn && evt.keyCode === 13) {
             //if the target of event is close button and key pressed is enter key close info window.
@@ -434,6 +437,9 @@ class App extends Component {
       iwCloseBtn.tabIndex = "0";
       //add focus to info window close button
       iwCloseBtn.focus();
+      //Add aria label and role to close button of info window
+      iwCloseBtn.setAttribute('role', 'button')
+      iwCloseBtn.setAttribute('aria-label', 'Hide info window')
       document.addEventListener("keypress", evt => {
         if (evt.target === iwCloseBtn && evt.keyCode === 13) {
           //if the target of event is close button and key pressed is enter key close info window.
@@ -480,7 +486,7 @@ class App extends Component {
     /*Using foursquare api search for locations around the lat, lng values with
     * a radius of 10000 meters*/
     fetch(
-      `https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=20&client_id=${
+      `https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=1&client_id=${
         this.state.clientId
       }&client_secret=${this.state.clientSecret}&v=20180730`
     )
