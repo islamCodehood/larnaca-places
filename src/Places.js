@@ -19,6 +19,7 @@ class Places extends Component {
           tabIndex="0"
           onKeyDown={this.handleKeyDown}
           aria-label="Hide menu"
+          role="button"
         >x</div>
         <Header />
         <SearchForm
