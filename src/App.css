@@ -288,6 +288,45 @@ header h1{
   cursor: pointer;
   color: #84afa3;
 }
+
+.failed-request {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: black;
+  visibility: hidden;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.failed-request-visible {
+  visibility: visible;
+}
+
+#sad-face {
+  color: rgb(255, 99, 71);
+  font-size: 124px;
+  margin-bottom: 24px;
+}
+
+#failure-message {
+  color: white;
+  font-size: 36px;
+}
+
+#failure-message a {
+  color: #1daa82;
+  text-decoration: underline;
+}
+
+#failure-message a:hover {
+  color: #0fbbc7;
+}
 /*media queries*/
 
 @media screen and (max-width: 1020px) {
