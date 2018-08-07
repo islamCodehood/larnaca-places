@@ -75,5 +75,16 @@
  - Application is available offline in production mood, not in development mood.
  
  
- ## Installation
+## Installation
+ 
+  - Download a compressed version from [here](https://github.com/Islam888/larnaca-places/archive/master.zip).
+  - Decompress the app.
+  - In your terminale locate the app directory and run `npm install`
+  - After finishing run `npm start`
+  - A browser tab will open at a localhost port 3000.
+  
+  
+## License
+
+- This project is licensed under the terms of the [MIT](https://github.com/Islam888/larnaca-places/blob/master/LICENSE.md).
  
