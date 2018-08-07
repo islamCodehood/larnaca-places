@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import "./App.css";
 import Burger from "./Burger";
 import Places from "./Places";
@@ -8,7 +8,8 @@ import escapeRegExp from "escape-string-regexp";
 import sortBy from "sort-by";
 import ReactDOM from "react-dom";
 import InfoWindow from "./InfoWindow";
-import cyprusflag from './cyprusflag.png'
+import FailedRequest from './FailedRequest'
+import cyprusflag from "./cyprusflag.png";
 
 class App extends Component {
   state = {
@@ -33,7 +34,8 @@ class App extends Component {
     placeId: "",
     //from function getPlaces(). It contains the detailed info about places that are in places state
     venues: [],
-    burgerBtnLabel: ''
+    //from function changeBurgerBtnLabel(). It contains the aria label for burger button.
+    burgerBtnLabel: ""
   };
 
   componentDidMount() {
@@ -42,22 +44,25 @@ class App extends Component {
     /*setting time out to wait for the getPlaces to return a value and update places
     * state before loading map and markers*/
     setTimeout(() => {
-      
-      this.checkScriptLoad()
+      this.checkScriptLoad();
     }, 3000);
-    //decide which layout to start with depending om viewport width
-    this.layoutOnLoad()
-    this.changeBurgerBtnLabel()
-
-    
+    //decide which layout to start with depending on viewport width
+    this.layoutOnLoad();
+    //change hamburger button aria label depending on side menu status (open or closed)
+    this.changeBurgerBtnLabel();
   }
 
   componentDidUpdate() {
-    this.removeFromTabOrder()
-    this.checkTextBox()
-    this.checkSelectedPlace()
-    this.layoutOnResize()
-    
+    //remove iframe element from tab order
+    this.removeFromTabOrder();
+    //check text box for any text query
+    this.checkTextBox();
+    /*check selectedPlace state if there  is a value, it opens the
+     *info window which has a title the same as the value od selectedPlace.*/
+
+    this.checkSelectedPlace();
+    //change layout during resizing view port
+    this.layoutOnResize();
   }
 
   checkScriptLoad = () => {
@@ -79,7 +84,7 @@ class App extends Component {
       //if the script has been looded, then initiate the map
       this.onScriptLoad();
     }
-  }
+  };
 
   checkTextBox = () => {
     ////Check if the query contains any text to search for places
@@ -95,23 +100,30 @@ class App extends Component {
         marker.setMap(this.state.map);
       });
     }
-  }
+  };
 
   selectPlace = selectedPlace => {
+    /*this handles click event on any of the menu list items and transfers the event
+     *target text content which is the location name to the state selectedPlace*/
     this.setState({
       selectedPlace
     });
   };
 
   selectPlaceByKeyDown = (selectedPlace, key) => {
+    /*check if the key was enter ker (keyCode = 13). If so it changes the selectedPlace state 
+    *to be the focused menu list item name*/
     if (key === 13) {
       this.setState({
         selectedPlace
       });
     }
-  }
+  };
 
   checkSelectedPlace = () => {
+    /*check selectedPlace state if there  is a value, it opens the
+    *info window which has a title the same as the value od selectedPlace.*/
+
     if (this.state.selectedPlace) {
       console.log(this.state.selectedPlace);
       this.state.listedPlaces.forEach(listedPlace => {
@@ -131,13 +143,12 @@ class App extends Component {
       this.setState({
         selectedPlace: ""
       });
-
     }
-  }
-  //initiate map and call makeMarkers()
+  };
+
   onScriptLoad = () => {
-    
-    //Styles from https://snazzymaps.com/style/18/retro
+    //After loading google maps script, initiate the map.
+    //Styles from https://snazzymaps.com/style/18/retro. And it is free to use.
     var styles = [
       {
         featureType: "administrative",
@@ -249,15 +260,18 @@ class App extends Component {
       zoom: 13,
       styles: styles
     });
+    //this ,ap state enables us to use it again outside of this function.
     this.setState({
       map
     });
+    //create markers on this map
     this.makeMarkers(map);
-    
   };
 
   makeMarkers = map => {
+    //define the map bounds
     var bounds = new window.google.maps.LatLngBounds();
+    //Using places array state which has been acquired from fetch API from Foursquare in getPlaces()
     this.state.places.forEach((place, index) => {
       var position = { lat: place.location.lat, lng: place.location.lng };
       var title = place.name;
@@ -270,6 +284,7 @@ class App extends Component {
         animation: window.google.maps.Animation.DROP
       });
       marker.addListener("click", function() {
+        //call showInfoWindow function in click event on marker
         showInfoWindow(this, map, place);
       });
       this.setState(state => ({
@@ -292,6 +307,7 @@ class App extends Component {
       infoWindows: state.infoWindows.concat(infoWindow)
     }));
     var showInfoWindow = (marker, map, place) => {
+      //get address from places state. Using join method to join formattedAddress array.
       var address = place.location.formattedAddress.join(", ");
       this.setState({
         placeId: place.id
@@ -316,39 +332,56 @@ class App extends Component {
           />,
           document.getElementById("infoWindow")
         );
-        //Citation for the styling of info window :
-        //http://en.marnoto.com/2014/09/5-formas-de-personalizar-infowindow.html
+        /***************************************************************************/
+        /*Citation for the customization of info window :
+        *http://en.marnoto.com/2014/09/5-formas-de-personalizar-infowindow.html*/
+        /*The purpose is to remove white background element, arror triangle, and 
+        *right margin of info window.*/
         const iwOuter = document.querySelector(".gm-style-iw");
         const iwBackground = iwOuter.previousSibling;
         if (iwBackground) {
           iwBackground.parentElement.removeChild(iwBackground);
         }
         const iwCloseBtn = iwOuter.nextElementSibling;
+        //To customize info window close button through css.
         iwCloseBtn.classList.add("iw-close-btn");
-        iwCloseBtn.tabIndex = "0"
-        iwCloseBtn.focus()
-        console.log(iwCloseBtn)
-        document.addEventListener('keypress', (evt) => {
+        /****************************************************************************/
+        //Add close button to tab order.
+        iwCloseBtn.tabIndex = "0";
+        //add focus to info window close button
+        iwCloseBtn.focus();
+        document.addEventListener("keypress", evt => {
           if (evt.target === iwCloseBtn && evt.keyCode === 13) {
-            console.log(evt.keyCode)
-            infoWindow.close()
+            //if the target of event is close button and key pressed is enter key close info window.
+            infoWindow.close();
+            //After closing info window re-focus the previous menu list item.
+            const listItems = document.getElementsByClassName("list-item");
+            Array.prototype.forEach.call(listItems, item => {
+              console.log(item.textContent, "/", marker.title);
+              if (item.textContent === marker.title) {
+                item.focus();
+              }
+            });
           }
-        })
-
+        });
       });
+      //Open info window
       infoWindow.open(map, marker);
     };
   };
 
   showSelectedInfoWindow = (listedPlace, map, place) => {
+    //show the info window of the clicked menu list item
     const selectedInfoWindow = this.state.infoWindows[0];
     var address = place.location.formattedAddress.join(", ");
     this.setState({
       placeId: place.id
     });
     selectedInfoWindow.addListener("closeclick", function() {
+      //close info window
       selectedInfoWindow.listedPlace = null;
     });
+    //citation: http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries/
     selectedInfoWindow.addListener("domready", () => {
       ReactDOM.render(
         <InfoWindow
@@ -364,31 +397,44 @@ class App extends Component {
         />,
         document.getElementById("infoWindow")
       );
-      //Citation for the styling of info window :
-      //http://en.marnoto.com/2014/09/5-formas-de-personalizar-infowindow.html
+      /***************************************************************************/
+      /*Citation for the customization of info window :
+      *http://en.marnoto.com/2014/09/5-formas-de-personalizar-infowindow.html*/
+      /*The purpose is to remove white background element, arror triangle, and 
+      *right margin of info window.*/
       const iwOuter = document.querySelector(".gm-style-iw");
       const iwBackground = iwOuter.previousSibling;
       if (iwBackground) {
         iwBackground.parentElement.removeChild(iwBackground);
       }
       const iwCloseBtn = iwOuter.nextElementSibling;
+      //To customize info window close button through css.
       iwCloseBtn.classList.add("iw-close-btn");
-      iwCloseBtn.tabIndex = "0"
-        iwCloseBtn.focus()
-        console.log(iwCloseBtn)
-        document.addEventListener('keypress', (evt) => {
-          if (evt.target === iwCloseBtn && evt.keyCode === 13) {
-            console.log(evt.keyCode)
-            selectedInfoWindow.close()
-          }
-        })
-        
+      /***************************************************************************/
+      //Add close button to tab order.
+      iwCloseBtn.tabIndex = "0";
+      //add focus to info window close button
+      iwCloseBtn.focus();
+      document.addEventListener("keypress", evt => {
+        if (evt.target === iwCloseBtn && evt.keyCode === 13) {
+          //if the target of event is close button and key pressed is enter key close info window.
+          selectedInfoWindow.close();
+          //After closing info window re-focus the previous menu list item.
+          const listItems = document.getElementsByClassName("list-item");
+          Array.prototype.forEach.call(listItems, item => {
+            console.log(item.textContent, "/", listedPlace.title);
+            if (item.textContent === listedPlace.title) {
+              item.focus();
+            }
+          });
+        }
+      });
     });
     selectedInfoWindow.open(map, listedPlace);
   };
 
   filterPlaces = query => {
-    console.log(query);
+    //check if there is a value in query and filter places simultaneously accordin to it.
     if (query) {
       //to test the query text (and ignore caps) against matching places names(marker title)
       const searchText = new RegExp(escapeRegExp(query), "i");
@@ -398,7 +444,7 @@ class App extends Component {
         )
       }));
       this.setState({
-        query: query
+        query
       });
     } else {
       this.setState(state => ({
@@ -406,12 +452,15 @@ class App extends Component {
       }));
       this.state.listedPlaces.sort(sortBy("title"));
       this.setState({
-        query: query
+        query
       });
     }
   };
 
   getPlaces = () => {
+    /*Using foursquare api search for locations around the lat, lng values with
+    * a radius of 10000 meters*/
+
     fetch(
       `https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=2&client_id=${
         this.state.clientId
@@ -419,6 +468,7 @@ class App extends Component {
     )
       .then(data => data.json())
       .then(data => data.response.venues)
+      //store fetched venues in places array state
       .then(venues =>
         venues.forEach(place => {
           console.log(place);
@@ -438,21 +488,28 @@ class App extends Component {
                 venues: state.venues.concat(data.response.venue)
               }));
             })
-            .catch(error => console.log);
+            .catch(error => {
+              console.log(error)
+              const failureElement = document.querySelector('.failed-request')
+              failureElement.classList.add('failed-request-visible')
+            });
         })
       )
-      .catch(error => console.log(error));
+      .catch(error =>{
+        console.log(error)
+        const failureElement = document.querySelector('.failed-request')
+        failureElement.classList.add('failed-request-visible')
+      });
   };
 
   getBestPhoto = () => {
-    const infoWindowWidth = document.getElementById('infoWindow').offsetWidth 
+    const infoWindowWidth = document.getElementById("infoWindow").offsetWidth;
     if (this.state.placeId) {
       const bestPhotoObject = this.state.venues.find(
         venue => venue.id === this.state.placeId
       ).bestPhoto;
-      
-      
-      const bestPhotoSize = (infoWindowWidth-2) + "x180";
+
+      const bestPhotoSize = infoWindowWidth - 2 + "x180";
       if (bestPhotoObject) {
         return bestPhotoObject.prefix + bestPhotoSize + bestPhotoObject.suffix;
       } else {
@@ -474,7 +531,7 @@ class App extends Component {
         return "No data available";
       }
     } else {
-      return 'No data available. Please, try again later!'
+      return "No data available. Please, try again later!";
     }
   };
 
@@ -485,10 +542,9 @@ class App extends Component {
       ).name;
       return name;
     } else {
-      return 'No data available. Please, try again later!'
+      return "No data available. Please, try again later!";
     }
   };
-
 
   getLikes = () => {
     if (this.state.placeId) {
@@ -540,214 +596,232 @@ class App extends Component {
     const searchArea = document.getElementById("search-area");
     const header = document.getElementById("header");
     const burgerHeader = document.getElementById("burger-header");
-    drawer.classList = ''
-    rightSection.classList = ''
-    burgerHeader.className = ''
-    searchArea.className = ''
-    header.className = ''
-    drawer.classList.add('places-disappear')
-    rightSection.classList.add('right-full-width')
-    burgerHeader.classList.add('burger-header-visible')
-    searchArea.classList.add('search-area-disappear-transition')
-    searchArea.classList.add('search-area-disappear')
-    header.classList.add('header-disappear')
-    header.classList.add('header-disappear-transition')
-  }
+    drawer.classList = "";
+    rightSection.classList = "";
+    burgerHeader.className = "";
+    searchArea.className = "";
+    header.className = "";
+    drawer.classList.add("places-disappear");
+    rightSection.classList.add("right-full-width");
+    burgerHeader.classList.add("burger-header-visible");
+    searchArea.classList.add("search-area-disappear-transition");
+    searchArea.classList.add("search-area-disappear");
+    header.classList.add("header-disappear");
+    header.classList.add("header-disappear-transition");
+  };
   openCloseDrawer = () => {
     const drawer = document.getElementById("places-section");
     const rightSection = document.getElementById("right-section");
     const searchArea = document.getElementById("search-area");
     const header = document.getElementById("header");
     const burgerHeader = document.getElementById("burger-header");
-    const filterTextBox = document.getElementById('search-text-input')
-    console.log(filterTextBox)
-    if ((window.innerWidth > 900) && (drawer.classList.contains('places-section-width'))) {
-      drawer.classList = ''
-      rightSection.classList = ''
-      burgerHeader.className = ''
-      searchArea.className = ''
-      header.className = ''
-      drawer.classList.add('places-disappear')
-      rightSection.classList.add('right-full-width')
-      burgerHeader.classList.add('burger-header-visible')
-      searchArea.classList.add('search-area-disappear-transition')
-      searchArea.classList.add('search-area-disappear')
-      header.classList.add('header-disappear')
-      header.classList.add('header-disappear-transition')
-    } else if ((window.innerWidth > 900) && (drawer.classList.contains('places-disappear'))) {
-      drawer.classList = ''
-      rightSection.classList = ''
-      burgerHeader.className = ''
-      searchArea.className = ''
-      header.className = ''
-      drawer.classList.add('places-section-width')
-      rightSection.classList.add('right-section-width')
-      burgerHeader.classList.add('burger-header-disappear')
-      searchArea.classList.add('search-area-visible-transition')
-      searchArea.classList.add('search-area-visible')
-      header.classList.add('header-visible')
-      header.classList.add('header-visible-transition')
+    const filterTextBox = document.getElementById("search-text-input");
+    console.log(filterTextBox);
+    if (
+      window.innerWidth > 900 &&
+      drawer.classList.contains("places-section-width")
+    ) {
+      drawer.classList = "";
+      rightSection.classList = "";
+      burgerHeader.className = "";
+      searchArea.className = "";
+      header.className = "";
+      drawer.classList.add("places-disappear");
+      rightSection.classList.add("right-full-width");
+      burgerHeader.classList.add("burger-header-visible");
+      searchArea.classList.add("search-area-disappear-transition");
+      searchArea.classList.add("search-area-disappear");
+      header.classList.add("header-disappear");
+      header.classList.add("header-disappear-transition");
+    } else if (
+      window.innerWidth > 900 &&
+      drawer.classList.contains("places-disappear")
+    ) {
+      drawer.classList = "";
+      rightSection.classList = "";
+      burgerHeader.className = "";
+      searchArea.className = "";
+      header.className = "";
+      drawer.classList.add("places-section-width");
+      rightSection.classList.add("right-section-width");
+      burgerHeader.classList.add("burger-header-disappear");
+      searchArea.classList.add("search-area-visible-transition");
+      searchArea.classList.add("search-area-visible");
+      header.classList.add("header-visible");
+      header.classList.add("header-visible-transition");
       setTimeout(() => {
-        filterTextBox.focus()
-      }, 1000)
-    } else if ((window.innerWidth < 900) && (window.innerWidth > 500) && (drawer.classList.contains('places-disappear'))) {
-      drawer.classList = ''
-      rightSection.classList = ''
-      burgerHeader.className = ''
-      searchArea.className = ''
-      header.className = ''
-      drawer.classList.add('places-section-width')
-      rightSection.classList.add('right-section-width')
-      burgerHeader.classList.add('burger-header-disappear')
-      searchArea.classList.add('search-area-visible-transition')
-      searchArea.classList.add('search-area-visible')
-      header.classList.add('header-visible')
-      header.classList.add('header-visible-transition')
+        filterTextBox.focus();
+      }, 1000);
+    } else if (
+      window.innerWidth < 900 &&
+      window.innerWidth > 500 &&
+      drawer.classList.contains("places-disappear")
+    ) {
+      drawer.classList = "";
+      rightSection.classList = "";
+      burgerHeader.className = "";
+      searchArea.className = "";
+      header.className = "";
+      drawer.classList.add("places-section-width");
+      rightSection.classList.add("right-section-width");
+      burgerHeader.classList.add("burger-header-disappear");
+      searchArea.classList.add("search-area-visible-transition");
+      searchArea.classList.add("search-area-visible");
+      header.classList.add("header-visible");
+      header.classList.add("header-visible-transition");
       setTimeout(() => {
-        filterTextBox.focus()
-      }, 1000)
-    } else if ((window.innerWidth < 900) && (window.innerWidth > 500) && (drawer.classList.contains('places-section-width'))) {
-      drawer.classList = ''
-      rightSection.classList = ''
-      burgerHeader.className = ''
-      searchArea.className = ''
-      header.className = ''
-      drawer.classList.add('places-disappear')
-      rightSection.classList.add('right-full-width')
-      burgerHeader.classList.add('burger-header-visible')
-      searchArea.classList.add('search-area-disappear-transition')
-      searchArea.classList.add('search-area-disappear')
-      header.classList.add('header-disappear')
-      header.classList.add('header-disappear-transition')
-    } else if ((window.innerWidth < 500) &&  (drawer.classList.contains('places-disappear'))) {
-      drawer.classList = ''
-      rightSection.classList = ''
-      burgerHeader.className = ''
-      searchArea.className = ''
-      header.className = ''
-      drawer.classList.add('places-section-width')
-      rightSection.classList.add('right-section-width')
-      burgerHeader.classList.add('burger-header-disappear')
-      searchArea.classList.add('search-area-visible-transition')
-      searchArea.classList.add('search-area-visible')
-      header.classList.add('header-visible')
-      header.classList.add('header-visible-transition')
+        filterTextBox.focus();
+      }, 1000);
+    } else if (
+      window.innerWidth < 900 &&
+      window.innerWidth > 500 &&
+      drawer.classList.contains("places-section-width")
+    ) {
+      drawer.classList = "";
+      rightSection.classList = "";
+      burgerHeader.className = "";
+      searchArea.className = "";
+      header.className = "";
+      drawer.classList.add("places-disappear");
+      rightSection.classList.add("right-full-width");
+      burgerHeader.classList.add("burger-header-visible");
+      searchArea.classList.add("search-area-disappear-transition");
+      searchArea.classList.add("search-area-disappear");
+      header.classList.add("header-disappear");
+      header.classList.add("header-disappear-transition");
+    } else if (
+      window.innerWidth < 500 &&
+      drawer.classList.contains("places-disappear")
+    ) {
+      drawer.classList = "";
+      rightSection.classList = "";
+      burgerHeader.className = "";
+      searchArea.className = "";
+      header.className = "";
+      drawer.classList.add("places-section-width");
+      rightSection.classList.add("right-section-width");
+      burgerHeader.classList.add("burger-header-disappear");
+      searchArea.classList.add("search-area-visible-transition");
+      searchArea.classList.add("search-area-visible");
+      header.classList.add("header-visible");
+      header.classList.add("header-visible-transition");
       setTimeout(() => {
-        filterTextBox.focus()
-      }, 1000)
-    } else if ((window.innerWidth < 500) && (drawer.classList.contains('places-section-width'))) {
-      drawer.classList = ''
-      rightSection.classList = ''
-      burgerHeader.className = ''
-      searchArea.className = ''
-      header.className = ''
-      drawer.classList.add('places-disappear')
-      rightSection.classList.add('right-full-width')
-      burgerHeader.classList.add('burger-header-visible')
-      searchArea.classList.add('search-area-disappear-transition')
-      searchArea.classList.add('search-area-disappear')
-      header.classList.add('header-disappear')
-      header.classList.add('header-disappear-transition')
+        filterTextBox.focus();
+      }, 1000);
+    } else if (
+      window.innerWidth < 500 &&
+      drawer.classList.contains("places-section-width")
+    ) {
+      drawer.classList = "";
+      rightSection.classList = "";
+      burgerHeader.className = "";
+      searchArea.className = "";
+      header.className = "";
+      drawer.classList.add("places-disappear");
+      rightSection.classList.add("right-full-width");
+      burgerHeader.classList.add("burger-header-visible");
+      searchArea.classList.add("search-area-disappear-transition");
+      searchArea.classList.add("search-area-disappear");
+      header.classList.add("header-disappear");
+      header.classList.add("header-disappear-transition");
     }
-  }
+  };
 
   layoutOnLoad = () => {
     const drawer = document.getElementById("places-section");
-      const rightSection = document.getElementById("right-section");
-      const burgerHeader = document.getElementById("burger-header")
-      const searchArea = document.getElementById("search-area");
-      const header = document.getElementById("header");
-      if (window.innerWidth < 900) {
-        drawer.className =''
-        rightSection.className = ''
-        burgerHeader.className = ''
-        drawer.classList.add('places-disappear')
-        searchArea.classList.add('search-area-disappear-transition')
-        searchArea.classList.add('search-area-disappear')
-        header.classList.add('header-disappear')
-        header.classList.add('header-disappear-transition')
-        rightSection.classList.add('right-full-width')
-        burgerHeader.classList.add('burger-header-visible')
-      } else {
-        drawer.className =''
-        rightSection.className = ''
-        burgerHeader.className = ''
-        searchArea.className = ''
-        header.className = ''
-        drawer.classList.add('places-section-width')
-        rightSection.classList.add('right-section-width')
-        burgerHeader.classList.add('burger-header-disappear')
-        searchArea.classList.add('search-area-visible-transition')
-        searchArea.classList.add('search-area-visible')
-        header.classList.add('header-visible')
-        header.classList.add('header-visible-transition')
-      }
-  }
+    const rightSection = document.getElementById("right-section");
+    const burgerHeader = document.getElementById("burger-header");
+    const searchArea = document.getElementById("search-area");
+    const header = document.getElementById("header");
+    if (window.innerWidth < 900) {
+      drawer.className = "";
+      rightSection.className = "";
+      burgerHeader.className = "";
+      drawer.classList.add("places-disappear");
+      searchArea.classList.add("search-area-disappear-transition");
+      searchArea.classList.add("search-area-disappear");
+      header.classList.add("header-disappear");
+      header.classList.add("header-disappear-transition");
+      rightSection.classList.add("right-full-width");
+      burgerHeader.classList.add("burger-header-visible");
+    } else {
+      drawer.className = "";
+      rightSection.className = "";
+      burgerHeader.className = "";
+      searchArea.className = "";
+      header.className = "";
+      drawer.classList.add("places-section-width");
+      rightSection.classList.add("right-section-width");
+      burgerHeader.classList.add("burger-header-disappear");
+      searchArea.classList.add("search-area-visible-transition");
+      searchArea.classList.add("search-area-visible");
+      header.classList.add("header-visible");
+      header.classList.add("header-visible-transition");
+    }
+  };
 
   layoutOnResize = () => {
     window.onresize = () => {
       const drawer = document.getElementById("places-section");
       const rightSection = document.getElementById("right-section");
-      const burgerHeader = document.getElementById("burger-header")
+      const burgerHeader = document.getElementById("burger-header");
       const searchArea = document.getElementById("search-area");
       const header = document.getElementById("header");
       if (window.innerWidth < 900) {
-        drawer.className =''
-        rightSection.className = ''
-        burgerHeader.className = ''
-        drawer.classList.add('places-disappear')
-        rightSection.classList.add('right-full-width')
-        burgerHeader.classList.add('burger-header-visible')
+        drawer.className = "";
+        rightSection.className = "";
+        burgerHeader.className = "";
+        drawer.classList.add("places-disappear");
+        rightSection.classList.add("right-full-width");
+        burgerHeader.classList.add("burger-header-visible");
       } else {
-        drawer.className =''
-        rightSection.className = ''
-        burgerHeader.className = ''
-        searchArea.className = ''
-        header.className = ''
-        drawer.classList.add('places-section-width')
-        rightSection.classList.add('right-section-width')
-        burgerHeader.classList.add('burger-header-disappear')
-        searchArea.classList.add('search-area-visible-transition')
-        searchArea.classList.add('search-area-visible')
-        header.classList.add('header-visible')
-        header.classList.add('header-visible-transition')
+        drawer.className = "";
+        rightSection.className = "";
+        burgerHeader.className = "";
+        searchArea.className = "";
+        header.className = "";
+        drawer.classList.add("places-section-width");
+        rightSection.classList.add("right-section-width");
+        burgerHeader.classList.add("burger-header-disappear");
+        searchArea.classList.add("search-area-visible-transition");
+        searchArea.classList.add("search-area-visible");
+        header.classList.add("header-visible");
+        header.classList.add("header-visible-transition");
       }
-    }
-  }
+    };
+  };
 
   removeFromTabOrder = () => {
-    const iframeElement = document.getElementsByTagName('iframe')[0]
+    const iframeElement = document.getElementsByTagName("iframe")[0];
     if (iframeElement) {
       iframeElement.tabIndex = -1;
     }
-    
-  }
+  };
 
   changeBurgerBtnLabel = () => {
-    const drawer = document.getElementById("places-section")
-    if (drawer.classList.contains('places-disappear')) {
+    const drawer = document.getElementById("places-section");
+    if (drawer.classList.contains("places-disappear")) {
       this.setState({
-        burgerBtnLabel: 'Show menu'
-      })
+        burgerBtnLabel: "Show menu"
+      });
     } else {
       this.setState({
-        burgerBtnLabel: 'Hide menu'
-      })
+        burgerBtnLabel: "Hide menu"
+      });
     }
-  }
+  };
 
-  openCloseDrawerByKeyDown = (key) => {
-    if(key === 13) {
-      this.openCloseDrawer()
+  openCloseDrawerByKeyDown = key => {
+    if (key === 13) {
+      this.openCloseDrawer();
     }
-  }
+  };
 
-  closeDrawerByKeyDown = (key) => {
-    if(key === 13) {
-      this.closeDrawer()
+  closeDrawerByKeyDown = key => {
+    if (key === 13) {
+      this.closeDrawer();
     }
-  }
-
+  };
 
   render() {
     return (
@@ -761,18 +835,18 @@ class App extends Component {
           closeDrawerByKeyDown={this.closeDrawerByKeyDown}
         />
         <section id="right-section" className="right-section-width">
-          <Burger 
-            handleClick={this.openCloseDrawer} 
+          <Burger
+            handleClick={this.openCloseDrawer}
             BurgerBtnLabel={this.state.burgerBtnLabel}
             openCloseDrawerByKeyDown={this.openCloseDrawerByKeyDown}
           />
           <Map />
         </section>
+        <FailedRequest />
       </main>
     );
   }
 }
-
 
 App.propType = {
   title: PropTypes.string.isRequired,
@@ -794,6 +868,6 @@ App.propType = {
   handleClick: PropTypes.func.isRequired,
   BurgerBtnLabel: PropTypes.string.isRequired,
   openCloseDrawerByKeyDown: PropTypes.func.isRequired
-}
- 
+};
+
 export default App;
