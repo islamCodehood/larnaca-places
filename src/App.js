@@ -76,6 +76,7 @@ class App extends Component {
       const leftSection = document.getElementById("places-section")
       const rightSection = document.getElementById("right-section")
       failureElement.classList.add("failed-request-visible");
+      //hide other components to prevent from gettng focused when tabbing
       leftSection.style.display = "none"
       rightSection.style.display = "none"
     }
