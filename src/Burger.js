@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 
 class Burger extends Component {
     handleKeyDown = (evt) => {
-        /* evt.preventDefault() */
-        console.log(evt.keyCode)
         this.props.openCloseDrawerByKeyDown(evt.keyCode)
     }
     render() {
