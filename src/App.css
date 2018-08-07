@@ -323,7 +323,7 @@ header h1{
   visibility: visible;
 }
 
-#sad-face {
+.sad-face {
   color: rgb(255, 99, 71);
   font-size: 124px;
   margin-bottom: 24px;
@@ -344,6 +344,30 @@ header h1{
   text-decoration: underline;
 }
 
+footer {
+  position: absolute;
+  top: 97vh;
+  left: 0;
+  height: 3vh;
+  text-align: center;
+  background: #222;
+  color: #1daa82;
+  font-size: 14px;
+}
+
+footer a {
+  text-decoration: none;
+  color: #1daa82;
+}
+
+footer a:hover {
+  text-decoration: underline;
+  color: #0fbbc7;
+}
+
+.hide-all {
+  visibility: hidden;
+}
 /*media queries*/
 
 @media screen and (max-width: 1020px) {
@@ -509,7 +533,7 @@ header h1{
     
   }
   #burger {
-    height: 5vh;
+    height: 7vh;
   }
 
   #infoWindow {
@@ -535,4 +559,8 @@ header h1{
   #category {
     margin-bottom: 10px;
   }
+  footer {
+    font-size: 12px;
+  }
+
 }
