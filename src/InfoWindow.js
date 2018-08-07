@@ -4,7 +4,7 @@ function InfoWindow(props) {
       return (
         <div>
             <img src={props.bestPhoto} alt={`${props.title} ${props.category}`}/>
-            <div id="title"><span>{props.title}</span></div>
+            <div id="title"><h2>{props.title}</h2></div>
             <div id="info">
               <div id="category"><span>{props.category}</span></div>
               <div id="location"><span>Location </span> {props.address}</div>
