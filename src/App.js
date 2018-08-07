@@ -9,6 +9,7 @@ import sortBy from "sort-by";
 import ReactDOM from "react-dom";
 import InfoWindow from "./InfoWindow";
 import FailedRequest from "./FailedRequest";
+import FailedMapRequest from "./FailedMapRequest"
 import cyprusflag from "./cyprusflag.png";
 
 class App extends Component {
@@ -50,6 +51,9 @@ class App extends Component {
     this.layoutOnLoad();
     //change hamburger button aria label depending on side menu status (open or closed)
     this.changeBurgerBtnLabel();
+    //check if the map fails to load.
+    this.failureAction();
+
   }
 
   componentDidUpdate() {
@@ -65,13 +69,21 @@ class App extends Component {
     this.layoutOnResize();
   }
 
+  failureAction = () => {
+    //If the map fails to load display FailedMapRequest component
+    window.gm_authFailure = () => {
+      const failureElement = document.querySelector(".failed-map-request");
+      failureElement.classList.add("failed-request-visible");
+    }
+  }
+
   checkScriptLoad = () => {
     //citation: http://cuneyt.aliustaoglu.biz/en/using-google-maps-in-react-without-custom-libraries/
     //check if the script has not been looded yet(google is undefined)
     if (!window.google) {
       var scriptElement = document.createElement("script");
       scriptElement.type = "text/javascript";
-      scriptElement.src = `https://maps.google.com/maps/api/js?libraries=places&key=AIzaSyCFLgAmdZmi8GXGUAasIOWJ-cbYhuoXkyE`;
+      scriptElement.src = `https://maps.google.com/maps/api/js?libraries=places&key=IzaSyCFLgAmdZmi8GXGUAasIOWJ-cbYhuoXkyE`;
       //x is the first script element in the file
       var x = document.getElementsByTagName("script")[0];
       //insert map script before it
@@ -719,6 +731,7 @@ class App extends Component {
       searchArea.classList.add("search-area-visible");
       header.classList.add("header-visible");
       header.classList.add("header-visible-transition");
+      
       setTimeout(() => {
         filterTextBox.focus();
       }, 1000);
@@ -862,6 +875,7 @@ class App extends Component {
           <Map />
         </section>
         <FailedRequest />
+        <FailedMapRequest />
       </main>
     );
   }
