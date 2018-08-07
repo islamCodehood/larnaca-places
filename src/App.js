@@ -73,7 +73,11 @@ class App extends Component {
     //If the map fails to load display FailedMapRequest component
     window.gm_authFailure = () => {
       const failureElement = document.querySelector(".failed-map-request");
+      const leftSection = document.getElementById("places-section")
+      const rightSection = document.getElementById("right-section")
       failureElement.classList.add("failed-request-visible");
+      leftSection.style.display = "none"
+      rightSection.style.display = "none"
     }
   }
 
@@ -502,14 +506,22 @@ class App extends Component {
             .catch(error => {
               console.log(error);
               const failureElement = document.querySelector(".failed-request");
+              const leftSection = document.getElementById("places-section")
+              const rightSection = document.getElementById("right-section")
               failureElement.classList.add("failed-request-visible");
+              leftSection.style.display = "none"
+              rightSection.style.display = "none"
             });
         })
       )
       .catch(error => {
         console.log(error);
         const failureElement = document.querySelector(".failed-request");
+        const leftSection = document.getElementById("places-section")
+        const rightSection = document.getElementById("right-section")
         failureElement.classList.add("failed-request-visible");
+        leftSection.style.display = "none"
+        rightSection.style.display = "none"
       });
   };
 
