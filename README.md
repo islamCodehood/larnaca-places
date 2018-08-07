@@ -61,8 +61,10 @@
 
  - It can be displayed and used with full functionality over different view ports of different devices from the smallest mobile device to the widest screen.
  
- ![mobile view](https://github.com/Islam888/larnaca-places/blob/master/mobile-view.png)
- ![ipad view](https://github.com/Islam888/larnaca-places/blob/master/mobile-view2.png)
+ ![mobile view](https://github.com/Islam888/larnaca-places/blob/master/mobile-view2.png)
+ 
+ ![ipad view](https://github.com/Islam888/larnaca-places/blob/master/mobile-view.png)
+ 
  ![Desktop view](https://github.com/Islam888/larnaca-places/blob/master/desktop.png)
  
  
