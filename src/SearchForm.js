@@ -28,7 +28,11 @@ class SearchForm extends Component {
     return (
       <div id="search-area" className="">
         <div id="searchForm">
-          <form value={this.state.query} autoComplete="off">
+          <form
+            value={this.state.query}
+            autoComplete="off"
+            role="search"
+          >
             <input
               type="text"
               id="search-text-input"
@@ -47,6 +51,7 @@ class SearchForm extends Component {
                 onClick={this.handleClick}
                 onKeyDown={this.handleKeyDown}
                 className="list-item"
+                role="tab"
                 tabIndex="0"
               >
                 {marker.title}
