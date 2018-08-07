@@ -1,27 +1,18 @@
-import React, { Component } from "react";
-import PropTypes from 'prop-types';
+import React from "react";
 
-class InfoWindow extends Component {
-    render() {
+function InfoWindow(props) {
       return (
         <div>
-            <img src={this.props.bestPhoto} alt={`${this.props.title} ${this.props.category}`}/>
-            <div id="title"><span>{this.props.title}</span></div>
+            <img src={props.bestPhoto} alt={`${props.title} ${props.category}`}/>
+            <div id="title"><span>{props.title}</span></div>
             <div id="info">
-              <div id="category"><span>{this.props.category}</span></div>
-              <div id="location"><span>Location </span> {this.props.address}</div>
-              <div id="likes"><span>Likes </span> {this.props.likes}</div>
-              <div id="rating"><span id="rating-title">Rating </span> <span id="ratingColor" style={{background: `${this.props.ratingColor}`}}>{this.props.rating}</span></div>
+              <div id="category"><span>{props.category}</span></div>
+              <div id="location"><span>Location </span> {props.address}</div>
+              <div id="likes"><span>Likes </span> {props.likes}</div>
+              <div id="rating"><span id="rating-title">Rating </span> <span id="ratingColor" style={{background: `${props.ratingColor}`}}>{props.rating}</span></div>
             </div>
         </div>
       );
-    }
   }
 
-  InfoWindow.PropTypes = {
-    src: PropTypes.string.isRequired,
-    alt: PropTypes.string.isRequired,
-    style: PropTypes.object.isRequired
-  }
-  
   export default InfoWindow;
