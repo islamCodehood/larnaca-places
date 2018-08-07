@@ -31,7 +31,7 @@ body {
   background: #222;
   position: fixed;
   right: 0;
-  transition: width 1s;
+  transition: all 1s;
 }
 
 #map-section {
@@ -54,7 +54,7 @@ body {
 
 #burger-btn:hover {
   cursor: pointer;
-  color: #84afa3;
+  color: #0fbbc7;
 }
 
 #burger-header {
@@ -111,7 +111,7 @@ header h1{
 }
 
 *:focus {
-  outline: 2px solid red;
+  outline: 3px solid #02b3c0;
 }
 
 ::-webkit-input-placeholder {
@@ -304,6 +304,21 @@ header h1{
   justify-content: center;
 }
 
+.failed-map-request {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: black;
+  visibility: hidden;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .failed-request-visible {
   visibility: visible;
 }
@@ -314,19 +329,21 @@ header h1{
   margin-bottom: 24px;
 }
 
-#failure-message {
+.failure-message {
   color: white;
   font-size: 36px;
 }
 
-#failure-message a {
+.failure-message a {
   color: #1daa82;
+  text-decoration: none;
+}
+
+.failure-message a:hover {
+  color: rgb(255, 99, 71);
   text-decoration: underline;
 }
 
-#failure-message a:hover {
-  color: #0fbbc7;
-}
 /*media queries*/
 
 @media screen and (max-width: 1020px) {
@@ -481,7 +498,7 @@ header h1{
 
   .places-closeButton {
     position: absolute;
-    top: 2%;
+    top: 0;
     left: 90%;
     font-size: 26px;
     visibility: visible;
