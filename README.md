@@ -20,11 +20,11 @@
   2. Map section.
 - Side menu section:
   - It contains a text box filter that filter places in the list below it and filter markers on map.
-  - The list contains all places by default when loaded (before filteration).
+  - The list contains all places by default when loaded (before filtration).
   - Clicking an item in the list produce a marker animation and shows an info windo with some data about the place.
 - Map section:
-  - Shows a map of the neighborhood with all the markers displayed (before filteration)
-  - Clicking any marker shows an info windo with some data about the place.
+  - Shows a map of the neighborhood with all the markers displayed (before filtration)
+  - Clicking any marker shows an info window with some data about the place.
   
   
 ## React App Hierarchy
