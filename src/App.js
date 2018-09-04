@@ -482,7 +482,7 @@ class App extends Component {
     /*Using foursquare api search for locations around the lat, lng values with
     * a radius of 10000 meters*/
     fetch(
-      `https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=1&client_id=${
+      `https://api.foursquare.com/v2/venues/search?ll=34.900253,33.623172&radius=10000&intent=browse&limit=15&client_id=${
         this.state.clientId
       }&client_secret=${this.state.clientSecret}&v=20180730`
     )
