@@ -4,6 +4,7 @@
 ### Contents:
 
 - [Description](#description).
+- [App URL](#app-url).
 - [React App Hierarchy](#react-app-hierarchy).
 - [Dependencies](#dependencies).
 - [App Characteristics](#app-characteristics).
@@ -26,6 +27,9 @@
   - Shows a map of the neighborhood with all the markers displayed (before filtration)
   - Clicking any marker shows an info window with some data about the place.
   
+## App URL
+
+- https://larnaca-places.netlify.com/
   
 ## React App Hierarchy
   
