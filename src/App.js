@@ -65,7 +65,7 @@ class App extends Component {
 
     this.checkSelectedPlace();
     //change layout during resizing view port
-    this.layoutOnResize();
+    //this.layoutOnResize();
   }
 
   failureAction = () => {
